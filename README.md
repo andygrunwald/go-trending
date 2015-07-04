@@ -1,6 +1,11 @@
 # go-trending
 A package to retrieve [trending repositories](https://github.com/trending) and [developers](https://github.com/trending/developers) from Github written in [golang](https://golang.org/).
 
+* TODO Add Screenshot
+* TODO Add TravisCI
+* TODO Add GoDoc
+* TODO Add 
+
 ## Installation
 
 TODO
@@ -13,7 +18,33 @@ TODO
 
 ### List trending repositories of today for all languages
 
-TODO
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andygrunwald/go-trending"
+	"log"
+)
+
+func main() {
+	trend := trending.NewTrending()
+	
+	// Show projects of today
+	projects, err := trend.GetProjects(trending.TimeToday, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for index, project := range projects {
+		no := index + 1
+		if len(project.Language) > 0 {
+			fmt.Printf("%d: %s (written in %s with %d \xE2\xAD\x90 )\n", no, project.Name, project.Language, project.Stars)
+		} else {
+			fmt.Printf("%d: %s (with %d \xE2\xAD\x90 )\n", no, project.Name, project.Stars)
+		}
+	}
+}
+```
 
 ### List trending repositories of this week for golang
 
@@ -43,7 +74,8 @@ func main() {
 		log.Fatal(err)
 	}
 	for index, language := range languages {
-		fmt.Printf("%d: %s (%s)\n", index, language.Name, language.URLName)
+		no := index + 1
+		fmt.Printf("%d: %s (%s)\n", no, language.Name, language.URLName)
 	}
 }
 
