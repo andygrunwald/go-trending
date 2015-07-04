@@ -48,11 +48,58 @@ func main() {
 
 ### List trending repositories of this week for golang
 
-TODO
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andygrunwald/go-trending"
+	"log"
+)
+
+func main() {
+	trend := trending.NewTrending()
+
+	// Show projects of today
+	projects, err := trend.GetProjects(trending.TimeWeek, "go")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for index, project := range projects {
+		no := index + 1
+		if len(project.Language) > 0 {
+			fmt.Printf("%d: %s (written in %s with %d \xE2\xAD\x90 )\n", no, project.Name, project.Language, project.Stars)
+		} else {
+			fmt.Printf("%d: %s (with %d \xE2\xAD\x90 )\n", no, project.Name, project.Stars)
+		}
+	}
+}
+```
 
 ### List trending developers of this month for Swift
 
-TODO
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andygrunwald/go-trending"
+	"log"
+)
+
+func main() {
+	trend := trending.NewTrending()
+
+	developers, err := trend.GetDevelopers(trending.TimeMonth, "swift")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for index, developer := range developers {
+		no := index + 1
+		fmt.Printf("%d: %s (%s)\n", no, developer.DisplayName, developer.FullName)
+	}
+}
+```
 
 ### List available languages
 
@@ -80,6 +127,10 @@ func main() {
 }
 
 ```
+
+## TODO-List
+
+* Languages url name is the full url. Change it.
 
 ## License
 
