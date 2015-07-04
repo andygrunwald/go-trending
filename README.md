@@ -4,7 +4,9 @@ A package to retrieve [trending repositories](https://github.com/trending) and [
 * TODO Add Screenshot
 * TODO Add TravisCI
 * TODO Add GoDoc
-* TODO Add 
+* TODO Add
+
+This package were inspired by [rochefort/git-trend](https://github.com/rochefort/git-trend) and [sheharyarn/github-trending](https://github.com/sheharyarn/github-trending).
 
 ## Installation
 
