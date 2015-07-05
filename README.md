@@ -1,11 +1,11 @@
 # go-trending
 
 [![GoDoc](https://godoc.org/github.com/andygrunwald/go-trending?status.svg)](https://godoc.org/github.com/andygrunwald/go-trending)
+[![Build Status](https://travis-ci.org/andygrunwald/go-trending.svg?branch=master)](https://travis-ci.org/andygrunwald/go-trending)
 
 A package to retrieve [trending repositories](https://github.com/trending) and [developers](https://github.com/trending/developers) from Github written in [golang](https://golang.org/).
 
 * TODO Add Screenshot
-* TODO Add TravisCI
 
 This package were inspired by [rochefort/git-trend](https://github.com/rochefort/git-trend) and [sheharyarn/github-trending](https://github.com/sheharyarn/github-trending).
 
