@@ -28,3 +28,35 @@ func ExampleTrending_GetProjects() {
 
 	// Output: Projects (filtered by Go) recieved.
 }
+
+func ExampleTrending_Languages() {
+	trend := trending.NewTrending()
+	languages, err := trend.GetLanguages()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(languages) > 0 {
+		fmt.Println("Languages recieved.")
+	} else {
+		fmt.Printf("Number of languages recieved: %d", len(languages))
+	}
+
+	// Output: Languages recieved.
+}
+
+func ExampleTrending_GetDevelopers() {
+	trend := trending.NewTrending()
+	developers, err := trend.GetDevelopers(trending.TimeWeek, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(developers) > 0 {
+		fmt.Println("Developers recieved.")
+	} else {
+		fmt.Printf("Number of developer recieved: %d", len(developers))
+	}
+
+	// Output: Developers recieved.
+}
