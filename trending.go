@@ -56,6 +56,18 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		contributerPath, exists := s.Find(".repo-list-meta a").First().Attr("href")
 		contributerURL := t.appendBaseHostToPath(contributerPath, exists)
 
+		// Collect contributer
+		var developer []Developer
+		s.Find(".repo-list-meta a img").Each(func(j int, devSelection *goquery.Selection) {
+			devName, exists := devSelection.Attr("title")
+			linkURL := t.appendBaseHostToPath(devName, exists)
+
+			avatar, exists := devSelection.Attr("src")
+			avatarURL := t.buildAvatarURL(avatar, exists)
+
+			developer = append(developer, t.newDeveloper(devName, "", linkURL, avatarURL))
+		})
+
 		p := Project{
 			Name:           name,
 			Description:    description,
@@ -63,6 +75,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			Stars:          stars,
 			URL:            projectURL,
 			ContributerURL: contributerURL,
+			Contributer:    developer,
 		}
 
 		projects = append(projects, p)
@@ -170,6 +183,7 @@ func (t *Trending) trimBraces(text string) string {
 }
 
 func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
+	// TODO remove s parameter
 	var avatarURL *url.URL
 	var err error
 

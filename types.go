@@ -63,6 +63,7 @@ type Trending struct {
 // Stars is the number of github stars this project recieved in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants). This number don`t reflect the overall stars of the project.
 // URL is the http(s) address of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures".
 // ContributerURL is the http(s) address of the contributers page of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures/graphs/contributors".
+// Contributer are a collection of Developer. Be aware that this collection don`t covers all contributer. Only those who are mentioned at githubs trending page.
 type Project struct {
 	Name           string
 	Description    string
@@ -70,6 +71,7 @@ type Project struct {
 	Stars          int
 	URL            *url.URL
 	ContributerURL *url.URL
+	Contributer    []Developer
 }
 
 // Language reflects a single (programing) language offered by github for filtering.
