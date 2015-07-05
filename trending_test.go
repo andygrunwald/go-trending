@@ -29,7 +29,7 @@ func ExampleTrending_GetProjects() {
 	// Output: Projects (filtered by Go) recieved.
 }
 
-func ExampleTrending_Languages() {
+func ExampleTrending_GetLanguages() {
 	trend := trending.NewTrending()
 	languages, err := trend.GetLanguages()
 	if err != nil {
