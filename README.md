@@ -147,10 +147,6 @@ func main() {
 
 ```
 
-## TODO-List
-
-* Languages url name is the full url. Change it.
-
 ## License
 
 This project is released under the terms of the [MIT license](http://en.wikipedia.org/wiki/MIT_License).

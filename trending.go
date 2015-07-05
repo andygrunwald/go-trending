@@ -5,6 +5,7 @@ package trending
 import (
 	"github.com/PuerkitoBio/goquery"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -87,9 +88,10 @@ func (t *Trending) GetLanguages() ([]Language, error) {
 			languageURLName = ""
 		}
 
-		// TODO
-		// language = href.match(/github.com\/trending\?l=(.+)/).to_a[1]
-		//      languages << CGI.unescape(language) if language
+		re := regexp.MustCompile("github.com/trending\\?l=(.+)")
+		if matches := re.FindStringSubmatch(languageURLName); len(matches) >= 2 && len(matches[1]) > 0 {
+			languageURLName = matches[1]
+		}
 
 		language := Language{
 			Name:    s.Text(),
