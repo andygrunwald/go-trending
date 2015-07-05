@@ -155,7 +155,17 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 			}
 		}
 
+		// Determine UserID based on Avatar
+		id := 0
+		if avatarURL != nil {
+			re := regexp.MustCompile("u/([0-9]+)")
+			if matches := re.FindStringSubmatch(avatarURL.Path); len(matches) >= 2 && len(matches[1]) > 0 {
+				id, _ = strconv.Atoi(matches[1])
+			}
+		}
+
 		d := Developer{
+			ID:          id,
 			DisplayName: name,
 			FullName:    fullName,
 			URL:         linkURL,

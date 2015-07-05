@@ -85,12 +85,13 @@ type Language struct {
 
 // Developer reflects a single trending developer / organisation.
 // It provides information as printed on the source website https://github.com/trending/developers.
+// ID is the github`s unique identifier of the user / organisation like 1342004 (google) or 698437 (airbnb).
 // DisplayName is the username of the developer / organisation like "torvalds" or "apache".
 // FullName is the real name of the developer / organisation like "Linus Torvalds" (for "torvalds") or "The Apache Software Foundation" (for "apache").
 // URL is the http(s) address of the developer / organisation reflected as url.URL datastructure like https://github.com/torvalds.
 // Avatar is the http(s) address of the developer / organisation avatar as url.URL datastructure like https://avatars1.githubusercontent.com/u/1024025?v=3&s=192.
 type Developer struct {
-	// TODO Add User / Organisation ID
+	ID          int
 	DisplayName string
 	FullName    string
 	URL         *url.URL
