@@ -8,6 +8,14 @@ A package to retrieve [trending repositories](https://github.com/trending) and [
 
 This package were inspired by [rochefort/git-trend](https://github.com/rochefort/git-trend) and [sheharyarn/github-trending](https://github.com/sheharyarn/github-trending).
 
+## Features
+
+repositories
+developers
+time filtering (day, week, month)
+language filtering
+TODO
+
 ## Installation
 
 TODO
@@ -31,7 +39,7 @@ import (
 
 func main() {
 	trend := trending.NewTrending()
-	
+
 	// Show projects of today
 	projects, err := trend.GetProjects(trending.TimeToday, "")
 	if err != nil {
