@@ -183,7 +183,6 @@ func (t *Trending) trimBraces(text string) string {
 }
 
 func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
-	// TODO remove s parameter
 	var avatarURL *url.URL
 	var err error
 
@@ -191,6 +190,12 @@ func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
 		avatarURL, err = url.Parse(avatar)
 		if err != nil {
 			avatarURL = nil
+		} else {
+			// Remove s parameter
+			// The "s" parameter controls the size of the avatar
+			q := avatarURL.Query()
+			q.Del("s")
+			avatarURL.RawQuery = q.Encode()
 		}
 	}
 
