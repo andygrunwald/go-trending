@@ -61,14 +61,15 @@ type Trending struct {
 // Description is the description of the repository like "JavaScript Style Guide" (for "airbnb/javascript").
 // Language is the determined programing language of the project (by Github). Sometimes Language is an empty string, because Github can`t determine the (main) programing language (like for "google/deepdream").
 // Stars is the number of github stars this project recieved in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants). This number don`t reflect the overall stars of the project.
-// URL is the http(s) address of the project reflected as url.URL datastructure.
+// URL is the http(s) address of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures".
+// ContributerURL is the http(s) address of the contributers page of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures/graphs/contributors".
 type Project struct {
-	Name        string
-	Description string
-	Language    string
-	Stars       int
-	URL         *url.URL
-	// TODO Add Contributer link
+	Name           string
+	Description    string
+	Language       string
+	Stars          int
+	URL            *url.URL
+	ContributerURL *url.URL
 }
 
 // Language reflects a single (programing) language offered by github for filtering.

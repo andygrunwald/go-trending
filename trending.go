@@ -45,7 +45,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		name := t.getProjectName(s.Find(".repo-list-name a").Text())
 
 		address, exists := s.Find(".repo-list-name a").First().Attr("href")
-		projectURL := t.getProjectURL(address, exists)
+		projectURL := t.appendBaseHostToPath(address, exists)
 
 		description := s.Find(".repo-list-description").Text()
 		description = strings.TrimSpace(description)
@@ -53,12 +53,16 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		meta := s.Find(".repo-list-meta").Text()
 		language, stars := t.getLanguageAndStars(meta)
 
+		contributerPath, exists := s.Find(".repo-list-meta a").First().Attr("href")
+		contributerURL := t.appendBaseHostToPath(contributerPath, exists)
+
 		p := Project{
-			Name:        name,
-			Description: description,
-			Language:    language,
-			Stars:       stars,
-			URL:         projectURL,
+			Name:           name,
+			Description:    description,
+			Language:       language,
+			Stars:          stars,
+			URL:            projectURL,
+			ContributerURL: contributerURL,
 		}
 
 		projects = append(projects, p)
@@ -207,7 +211,7 @@ func (t *Trending) getLanguageAndStars(meta string) (string, int) {
 	return language, starsInt
 }
 
-func (t *Trending) getProjectURL(address string, exists bool) *url.URL {
+func (t *Trending) appendBaseHostToPath(address string, exists bool) *url.URL {
 	if exists == false {
 		return nil
 	}
