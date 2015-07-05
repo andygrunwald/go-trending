@@ -77,8 +77,10 @@ type Project struct {
 // For filter input you should use the URLName of Language.
 // Name is the human readable name of the language like "Go" or "Web Ontology Language"
 // URLName is the machine readable / usable name of the language used for filtering / url parameters like "go" or "web-ontology-language". Please use URLName if you want to filter your requests.
+// URL is the filter URL for the language like "https://github.com/trending?l=go" for "go" or "https://github.com/trending?l=unknown" or "unknown".
 type Language struct {
 	Name, URLName string
+	URL           *url.URL
 }
 
 // Developer reflects a single trending developer / organisation.

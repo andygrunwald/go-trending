@@ -88,6 +88,8 @@ func (t *Trending) GetLanguages() ([]Language, error) {
 			languageURLName = ""
 		}
 
+		filterURL, _ := url.Parse(languageURLName)
+
 		re := regexp.MustCompile("github.com/trending\\?l=(.+)")
 		if matches := re.FindStringSubmatch(languageURLName); len(matches) >= 2 && len(matches[1]) > 0 {
 			languageURLName = matches[1]
@@ -96,6 +98,7 @@ func (t *Trending) GetLanguages() ([]Language, error) {
 		language := Language{
 			Name:    s.Text(),
 			URLName: languageURLName,
+			URL:     filterURL,
 		}
 
 		languages = append(languages, language)
