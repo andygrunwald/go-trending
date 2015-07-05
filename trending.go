@@ -1,3 +1,5 @@
+// Package trending provides access to github`s trending repositories and developers.
+// The data will be collected from githubs website at https://github.com/trending and https://github.com/trending/developers.
 package trending
 
 import (
@@ -7,48 +9,114 @@ import (
 	"strings"
 )
 
+// These are predefined constants to define the timerange of the requested repository or developer.
+// If trending repositories or developer are requested a timeframe has to be added.
+// It is suggested to use this constants for this.
+// TimeToday is limit of the current day.
+// TimeWeek will focus on the complete week
+// TimeMonth include the complete month
 const (
 	TimeToday = "daily"
 	TimeWeek  = "weekly"
 	TimeMonth = "monthly"
+)
 
+// Internal used constants related to github`s website / structure.
+const (
 	baseHost = "https://github.com"
 	basePath = "/trending"
+	// TODO add developers path here
+)
 
+// Internal used constants to determine the requested resource.
+// The trending page of github provides repositories, developers and languages.
+// These constants are used (amongst others) to generate the correct url
+// to recieve the resources.
+// We don`t export these constants, because the trending package provides
+// dedicated methods to differ between repositories, developers and languages.
+const (
 	modeRepositories = "repositories"
 	modeDevelopers   = "developers"
 	modeLanguages    = "languages"
 )
 
+// Trending reflects the main datastructure of this package.
+// It doesn`t provide an exported state, but based on this the methods are called.
+// To recieve a new instance just add
+//
+//		package main
+//
+//		import (
+//			"github.com/andygrunwald/go-trending"
+//		)
+//
+//		func main() {
+//			trend := trending.NewTrending()
+//			...
+//		}
+//
 type Trending struct {
 	document *goquery.Document
 }
 
+// Project reflects a single trending repository.
+// It provides information as printed on the source website https://github.com/trending.
+// Name is the name of the repository including user / organisation like "andygrunwald/go-trending" or "airbnb/javascript".
+// Description is the description of the repository like "JavaScript Style Guide" (for "airbnb/javascript").
+// Language is the determined programing language of the project (by Github). Sometimes Language is an empty string, because Github can`t determine the (main) programing language (like for "google/deepdream").
+// Stars is the number of github stars this project recieved in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants). This number don`t reflect the overall stars of the project.
+// URL is the http(s) address of the project reflected as url.URL datastructure.
 type Project struct {
 	Name        string
 	Description string
 	Language    string
 	Stars       int
 	URL         *url.URL
+	// TODO Add Contributer link
+	// TODO Add Project / Repository ID
 }
 
+// Language reflects a single (programing) language offered by github for filtering.
+// If you call "GetProjects" you are able to filter by programing language.
+// For filter input you should use the URLName of Language.
+// Name is the human readable name of the language like "Go" or "Web Ontology Language"
+// URLName is the machine readable / usable name of the language used for filtering / url parameters like "go" or "web-ontology-language". Please use URLName if you want to filter your requests.
 type Language struct {
 	Name, URLName string
 }
 
+// Developer reflects a single trending developer / organisation.
+// It provides information as printed on the source website https://github.com/trending/developers.
+// DisplayName is the username of the developer / organisation like "torvalds" or "apache".
+// FullName is the real name of the developer / organisation like "Linus Torvalds" (for "torvalds") or "The Apache Software Foundation" (for "apache").
+// URL is the http(s) address of the developer / organisation reflected as url.URL datastructure like https://github.com/torvalds.
+// Avatar is the http(s) address of the developer / organisation avatar as url.URL datastructure like https://avatars1.githubusercontent.com/u/1024025?v=3&s=192.
 type Developer struct {
+	// TODO Add User / Organisation ID
 	DisplayName string
 	FullName    string
 	URL         *url.URL
 	Avatar      *url.URL
 }
 
+// NewTrending is the main entry point of the trending package.
+// It provides access to the API of this package by returning a Trending datastructure.
+// Usage:
+//
+//		trend := trending.NewTrending()
+//		projects, err := trend.GetProjects(trending.TimeToday, "")
+//		...
 func NewTrending() *Trending {
 	t := Trending{}
 	return &t
 }
 
+// GetProjects provides a slice of Project filtered by the given time and language.
+// time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...). If an empty string will be applied TimeToday will be the default.
+// language can be filtered by applying a programing language by your choice. The input must be a known language by Github and be part of GetLanguages(). Further more it must be the Language.URLName and not the human readable Language.Name.
+// If language is an empty string "All languages" will be applied.
 func (t *Trending) GetProjects(time, language string) ([]Project, error) {
+	// BUG(andygrunwald): time don`t get a default value if you apply an empty string. Default: TimeToday
 	var projects []Project
 
 	u, err := t.generateURL(modeRepositories, time, language)
@@ -88,6 +156,8 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	return projects, nil
 }
 
+// GetLanguages will return a slice of Language known by gitub.
+// With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
 	var languages []Language
 
@@ -122,6 +192,10 @@ func (t *Trending) GetLanguages() ([]Language, error) {
 	return languages, nil
 }
 
+// GetDevelopers provides a slice of Developer filtered by the given time and language.
+// time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...). If an empty string will be applied TimeToday will be the default.
+// language can be filtered by applying a programing language by your choice. The input must be a known language by Github and be part of GetLanguages(). Further more it must be the Language.URLName and not the human readable Language.Name.
+// If language is an empty string "All languages" will be applied.
 func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	var developers []Developer
 
