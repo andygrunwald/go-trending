@@ -27,6 +27,9 @@ TODO
 
 ## Examples
 
+Further a few examples how the API can be used.
+A few more examples are available in the [GoDoc examples section](https://godoc.org/github.com/andygrunwald/go-trending#pkg-examples).
+
 ### List trending repositories of today for all languages
 
 ```go
