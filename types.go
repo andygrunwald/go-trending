@@ -69,7 +69,6 @@ type Project struct {
 	Stars       int
 	URL         *url.URL
 	// TODO Add Contributer link
-	// TODO Add Project / Repository ID
 }
 
 // Language reflects a single (programing) language offered by github for filtering.
