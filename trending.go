@@ -144,18 +144,21 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 		avatar, exists := s.Find("img.leaderboard-gravatar").Attr("src")
 		avatarURL := t.buildAvatarURL(avatar, exists)
 
-		d := Developer{
-			ID:          t.getUserIDBasedOnAvatarURL(avatarURL),
-			DisplayName: name,
-			FullName:    fullName,
-			URL:         linkURL,
-			Avatar:      avatarURL,
-		}
-
-		developers = append(developers, d)
+		developers = append(developers, t.newDeveloper(name, fullName, linkURL, avatarURL))
 	})
 
 	return developers, nil
+}
+
+// newDeveloper creates a new Developer
+func (t *Trending) newDeveloper(name, fullName string, linkURL, avatarURL *url.URL) Developer {
+	return Developer{
+		ID:          t.getUserIDBasedOnAvatarURL(avatarURL),
+		DisplayName: name,
+		FullName:    fullName,
+		URL:         linkURL,
+		Avatar:      avatarURL,
+	}
 }
 
 func (t *Trending) trimBraces(text string) string {
