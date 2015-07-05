@@ -136,40 +136,16 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 		name = strings.TrimSpace(name)
 
 		fullName := s.Find(".user-leaderboard-list-name .full-name").Text()
-		fullName = strings.TrimSpace(fullName)
-		fullName = strings.TrimLeft(fullName, "(")
-		fullName = strings.TrimRight(fullName, ")")
+		fullName = t.trimBraces(fullName)
 
 		linkHref, exists := s.Find(".user-leaderboard-list-name a").Attr("href")
-		var linkURL *url.URL
-		if exists == true {
-			linkURL, err = url.Parse(baseHost + linkHref)
-			if err != nil {
-				linkURL = nil
-			}
-		}
+		linkURL := t.appendBaseHostToPath(linkHref, exists)
 
 		avatar, exists := s.Find("img.leaderboard-gravatar").Attr("src")
-		var avatarURL *url.URL
-
-		if exists == true {
-			avatarURL, err = url.Parse(avatar)
-			if err != nil {
-				avatarURL = nil
-			}
-		}
-
-		// Determine UserID based on Avatar
-		id := 0
-		if avatarURL != nil {
-			re := regexp.MustCompile("u/([0-9]+)")
-			if matches := re.FindStringSubmatch(avatarURL.Path); len(matches) >= 2 && len(matches[1]) > 0 {
-				id, _ = strconv.Atoi(matches[1])
-			}
-		}
+		avatarURL := t.buildAvatarURL(avatar, exists)
 
 		d := Developer{
-			ID:          id,
+			ID:          t.getUserIDBasedOnAvatarURL(avatarURL),
 			DisplayName: name,
 			FullName:    fullName,
 			URL:         linkURL,
@@ -180,6 +156,41 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	})
 
 	return developers, nil
+}
+
+func (t *Trending) trimBraces(text string) string {
+	text = strings.TrimSpace(text)
+	text = strings.TrimLeft(text, "(")
+	text = strings.TrimRight(text, ")")
+
+	return text
+}
+
+func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
+	var avatarURL *url.URL
+	var err error
+
+	if exists == true {
+		avatarURL, err = url.Parse(avatar)
+		if err != nil {
+			avatarURL = nil
+		}
+	}
+
+	return avatarURL
+}
+
+// getUserIDBasedOnAvatarLink determines the UserID based on an avatar link avatarURL
+func (t *Trending) getUserIDBasedOnAvatarURL(avatarURL *url.URL) int {
+	id := 0
+	if avatarURL != nil {
+		re := regexp.MustCompile("u/([0-9]+)")
+		if matches := re.FindStringSubmatch(avatarURL.Path); len(matches) >= 2 && len(matches[1]) > 0 {
+			id, _ = strconv.Atoi(matches[1])
+		}
+	}
+
+	return id
 }
 
 func (t *Trending) getLanguageAndStars(meta string) (string, int) {
