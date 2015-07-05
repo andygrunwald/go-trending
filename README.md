@@ -5,25 +5,30 @@
 
 A package to retrieve [trending repositories](https://github.com/trending) and [developers](https://github.com/trending/developers) from Github written in [golang](https://golang.org/).
 
-* TODO Add Screenshot
+[![trending package showcase](./img/go-trending-shrinked.png "trending package showcase")](./img/go-trending-shrinked.png)
 
 This package were inspired by [rochefort/git-trend](https://github.com/rochefort/git-trend) and [sheharyarn/github-trending](https://github.com/sheharyarn/github-trending).
 
 ## Features
 
-repositories
-developers
-time filtering (day, week, month)
-language filtering
-TODO
+* Get trending repositories
+* Get trending developers
+* Filtering by time and (programing) language
 
 ## Installation
 
-TODO
+It is go gettable
+
+    $ go get github.com/andygrunwald/go-trending
+
+(optional) to run unit / example tests:
+    
+    $ cd $GOPATH/src/github.com/andygrunwald/go-trending
+    $ go test -v
 
 ## API
 
-TODO
+Please have a look at the [GoDoc documentation](https://godoc.org/github.com/andygrunwald/go-trending) for a detailed API description.
 
 ## Examples
 
