@@ -19,9 +19,9 @@ const (
 
 // Internal used constants related to github`s website / structure.
 const (
-	baseHost = "https://github.com"
-	basePath = "/trending"
-	// TODO add developers path here
+	baseHost       = "https://github.com"
+	basePath       = "/trending"
+	developersPath = "/developers"
 )
 
 // Internal used constants to determine the requested resource.

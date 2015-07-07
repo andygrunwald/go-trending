@@ -273,7 +273,7 @@ func (t *Trending) getProjectName(name string) string {
 func (t *Trending) generateURL(mode, time, language string) (*url.URL, error) {
 	parseURL := baseHost + basePath
 	if mode == modeDevelopers {
-		parseURL += "/" + modeDevelopers
+		parseURL += developersPath
 	}
 
 	u, err := url.Parse(parseURL)
