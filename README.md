@@ -22,7 +22,7 @@ It is go gettable
     $ go get github.com/andygrunwald/go-trending
 
 (optional) to run unit / example tests:
-    
+
     $ cd $GOPATH/src/github.com/andygrunwald/go-trending
     $ go test -v
 
@@ -57,9 +57,9 @@ func main() {
 	for index, project := range projects {
 		no := index + 1
 		if len(project.Language) > 0 {
-			fmt.Printf("%d: %s (written in %s with %d \xE2\xAD\x90 )\n", no, project.Name, project.Language, project.Stars)
+			fmt.Printf("%d: %s (written in %s with %d ★ )\n", no, project.Name, project.Language, project.Stars)
 		} else {
-			fmt.Printf("%d: %s (with %d \xE2\xAD\x90 )\n", no, project.Name, project.Stars)
+			fmt.Printf("%d: %s (with %d ★ )\n", no, project.Name, project.Stars)
 		}
 	}
 }
@@ -87,9 +87,9 @@ func main() {
 	for index, project := range projects {
 		no := index + 1
 		if len(project.Language) > 0 {
-			fmt.Printf("%d: %s (written in %s with %d \xE2\xAD\x90 )\n", no, project.Name, project.Language, project.Stars)
+			fmt.Printf("%d: %s (written in %s with %d ★ )\n", no, project.Name, project.Language, project.Stars)
 		} else {
-			fmt.Printf("%d: %s (with %d \xE2\xAD\x90 )\n", no, project.Name, project.Stars)
+			fmt.Printf("%d: %s (with %d ★ )\n", no, project.Name, project.Stars)
 		}
 	}
 }
