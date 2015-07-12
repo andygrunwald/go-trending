@@ -13,6 +13,8 @@ This package were inspired by [rochefort/git-trend](https://github.com/rochefort
 
 * Get trending repositories
 * Get trending developers
+* Get trending languages
+* Get all programing languages known by GitHub
 * Filtering by time and (programing) language
 
 ## Installation
