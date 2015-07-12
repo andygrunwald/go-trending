@@ -147,6 +147,10 @@ func main() {
 
 ```
 
+## Implementations
+
+* [sikang99/hub-trend](https://github.com/sikang99/hub-trend/)
+
 ## License
 
 This project is released under the terms of the [MIT license](http://en.wikipedia.org/wiki/MIT_License).
