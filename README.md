@@ -7,7 +7,7 @@ A package to retrieve [trending repositories](https://github.com/trending) and [
 
 [![trending package showcase](./img/go-trending-shrinked.png "trending package showcase")](https://raw.githubusercontent.com/andygrunwald/go-trending/master/img/go-trending-shrinked.png)
 
-This package were inspired by [rochefort/git-trend](https://github.com/rochefort/git-trend) and [sheharyarn/github-trending](https://github.com/sheharyarn/github-trending).
+This package were inspired by [rochefort/git-trend](https://github.com/rochefort/git-trend) (Ruby) and [sheharyarn/github-trending](https://github.com/sheharyarn/github-trending) (Ruby).
 
 ## Features
 
