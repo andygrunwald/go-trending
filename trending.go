@@ -87,6 +87,17 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
+	return t.generateLanguages("div.select-menu-item a")
+}
+
+// GetTrendingLanguages will return a slice of Language that are currently trending.
+// Trending languages are displayed at https://github.com/trending on the right side.
+// With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
+func (t *Trending) GetTrendingLanguages() ([]Language, error) {
+	return t.generateLanguages("ul.language-filter-list a")
+}
+
+func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 	var languages []Language
 
 	u, err := t.generateURL(modeLanguages, "", "")
@@ -99,16 +110,14 @@ func (t *Trending) GetLanguages() ([]Language, error) {
 		return languages, err
 	}
 
-	doc.Find("div.select-menu-item a").Each(func(i int, s *goquery.Selection) {
-		languageURLName, exists := s.Attr("href")
-		if exists == false {
-			languageURLName = ""
-		}
+	doc.Find("ul.language-filter-list a").Each(func(i int, s *goquery.Selection) {
+		languageAddress, _ := s.Attr("href")
+		languageURLName := ""
 
-		filterURL, _ := url.Parse(languageURLName)
+		filterURL, _ := url.Parse(languageAddress)
 
 		re := regexp.MustCompile("github.com/trending\\?l=(.+)")
-		if matches := re.FindStringSubmatch(languageURLName); len(matches) >= 2 && len(matches[1]) > 0 {
+		if matches := re.FindStringSubmatch(languageAddress); len(matches) >= 2 && len(matches[1]) > 0 {
 			languageURLName = matches[1]
 		}
 
