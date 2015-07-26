@@ -152,6 +152,7 @@ func main() {
 ## Implementations
 
 * [sikang99/hub-trend](https://github.com/sikang99/hub-trend/)
+* [andygrunwald/TrendingGithub](https://github.com/andygrunwald/TrendingGithub) - [@TrendingGithub](https://twitter.com/TrendingGithub)
 
 ## License
 
