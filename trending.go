@@ -27,7 +27,6 @@ func NewTrending() *Trending {
 // language can be filtered by applying a programing language by your choice. The input must be a known language by Github and be part of GetLanguages(). Further more it must be the Language.URLName and not the human readable Language.Name.
 // If language is an empty string "All languages" will be applied.
 func (t *Trending) GetProjects(time, language string) ([]Project, error) {
-	// BUG(andygrunwald): time don`t get a default value if you apply an empty string. Default: TimeToday
 	var projects []Project
 
 	u, err := t.generateURL(modeRepositories, time, language)
