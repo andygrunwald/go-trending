@@ -2,6 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/andygrunwald/go-trending?status.svg)](https://godoc.org/github.com/andygrunwald/go-trending)
 [![Build Status](https://travis-ci.org/andygrunwald/go-trending.svg?branch=master)](https://travis-ci.org/andygrunwald/go-trending)
+[![Coverage Status](https://coveralls.io/repos/andygrunwald/go-trending/badge.svg?branch=master&service=github)](https://coveralls.io/github/andygrunwald/go-trending?branch=master)
 
 A package to retrieve [trending repositories](https://github.com/trending) and [developers](https://github.com/trending/developers) from Github written in [golang](https://golang.org/).
 
