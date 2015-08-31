@@ -58,6 +58,8 @@ type Trending struct {
 // Project reflects a single trending repository.
 // It provides information as printed on the source website https://github.com/trending.
 // Name is the name of the repository including user / organisation like "andygrunwald/go-trending" or "airbnb/javascript".
+// Owner is the name of the user or organisation. "andygrunwald" in "andygrunwald/go-trending" or "airbnb" in "airbnb/javascript".
+// RepositoryName is the name of therepository. "go-trending" in "andygrunwald/go-trending" or "javascript" in "airbnb/javascript".
 // Description is the description of the repository like "JavaScript Style Guide" (for "airbnb/javascript").
 // Language is the determined programing language of the project (by Github). Sometimes Language is an empty string, because Github can`t determine the (main) programing language (like for "google/deepdream").
 // Stars is the number of github stars this project recieved in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants). This number don`t reflect the overall stars of the project.
@@ -66,6 +68,8 @@ type Trending struct {
 // Contributer are a collection of Developer. Be aware that this collection don`t covers all contributer. Only those who are mentioned at githubs trending page.
 type Project struct {
 	Name           string
+	Owner          string
+	RepositoryName string
 	Description    string
 	Language       string
 	Stars          int

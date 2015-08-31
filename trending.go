@@ -43,6 +43,11 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 
 		name := t.getProjectName(s.Find(".repo-list-name a").Text())
 
+		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
+		splittedName := strings.SplitAfterN(name, "/", 2)
+		owner := splittedName[0][:len(splittedName[0])-1]
+		repositoryName := splittedName[1]
+
 		address, exists := s.Find(".repo-list-name a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
 
@@ -69,6 +74,8 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 
 		p := Project{
 			Name:           name,
+			Owner:          owner,
+			RepositoryName: repositoryName,
 			Description:    description,
 			Language:       language,
 			Stars:          stars,
@@ -76,7 +83,6 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			ContributerURL: contributerURL,
 			Contributer:    developer,
 		}
-
 		projects = append(projects, p)
 	})
 
