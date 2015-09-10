@@ -36,7 +36,8 @@ func ExampleTrending_GetLanguages() {
 		log.Fatal(err)
 	}
 
-	if len(languages) > 0 {
+	// We need more as 15 languages, because 9 are trending languages
+	if len(languages) > 15 {
 		fmt.Println("Languages recieved.")
 	} else {
 		fmt.Printf("Number of languages recieved: %d", len(languages))
@@ -59,4 +60,20 @@ func ExampleTrending_GetDevelopers() {
 	}
 
 	// Output: Developers recieved.
+}
+
+func ExampleTrending_GetTrendingLanguages() {
+	trend := trending.NewTrending()
+	languages, err := trend.GetTrendingLanguages()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(languages) > 0 {
+		fmt.Println("Trending Languages recieved.")
+	} else {
+		fmt.Printf("Number of languages recieved: %d", len(languages))
+	}
+
+	// Output: Trending Languages recieved.
 }
