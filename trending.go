@@ -17,6 +17,7 @@ import (
 //		trend := trending.NewTrending()
 //		projects, err := trend.GetProjects(trending.TimeToday, "")
 //		...
+//
 func NewTrending() *Trending {
 	baseURL, _ := url.Parse(defaultBaseURL)
 	t := Trending{
