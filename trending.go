@@ -1,5 +1,3 @@
-// Package trending provides access to github`s trending repositories and developers.
-// The data will be collected from githubs website at https://github.com/trending and https://github.com/trending/developers.
 package trending
 
 import (
@@ -26,25 +24,34 @@ func NewTrending() *Trending {
 	return &t
 }
 
-// GetProjects provides a slice of Project filtered by the given time and language.
-// time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...). If an empty string will be applied TimeToday will be the default.
-// language can be filtered by applying a programing language by your choice. The input must be a known language by Github and be part of GetLanguages(). Further more it must be the Language.URLName and not the human readable Language.Name.
-// If language is an empty string "All languages" will be applied.
+// GetProjects provides a slice of Projects filtered by the given time and language.
+//
+// time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...).
+// If an empty string will be applied TimeToday will be the default (current default by Github).
+//
+// language can be filtered by applying a programing language by your choice.
+// The input must be a known language by Github and be part of GetLanguages().
+// Further more it must be the Language.URLName and not the human readable Language.Name.
+// If language is an empty string "All languages" will be applied (current default by Github).
 func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	var projects []Project
 
+	// Generate the correct URL to call
 	u, err := t.generateURL(modeRepositories, time, language)
 	if err != nil {
 		return projects, err
 	}
 
+	// Receive document
 	doc, err := goquery.NewDocument(u.String())
 	if err != nil {
 		return projects, err
 	}
 
+	// Query our information
 	doc.Find(".repo-list-item").Each(func(i int, s *goquery.Selection) {
 
+		// Collect project information
 		name := t.getProjectName(s.Find(".repo-list-name a").Text())
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
@@ -106,19 +113,25 @@ func (t *Trending) GetTrendingLanguages() ([]Language, error) {
 	return t.generateLanguages("ul.language-filter-list a")
 }
 
+// generateLanguages will retreive the languages out of the github document.
+// Trending languages are shown on the right side as a small list.
+// Other languages are hidden in a dropdown at this site
 func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 	var languages []Language
 
+	// Generate the URL to call
 	u, err := t.generateURL(modeLanguages, "", "")
 	if err != nil {
 		return languages, err
 	}
 
+	// Get document
 	doc, err := goquery.NewDocument(u.String())
 	if err != nil {
 		return languages, err
 	}
 
+	// Query our information
 	doc.Find(mainSelector).Each(func(i int, s *goquery.Selection) {
 		languageAddress, _ := s.Attr("href")
 		languageURLName := ""
@@ -135,7 +148,6 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 			URLName: languageURLName,
 			URL:     filterURL,
 		}
-
 		languages = append(languages, language)
 	})
 
@@ -143,24 +155,31 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 }
 
 // GetDevelopers provides a slice of Developer filtered by the given time and language.
-// time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...). If an empty string will be applied TimeToday will be the default.
-// language can be filtered by applying a programing language by your choice. The input must be a known language by Github and be part of GetLanguages(). Further more it must be the Language.URLName and not the human readable Language.Name.
-// If language is an empty string "All languages" will be applied.
+//
+// time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...).
+// If an empty string will be applied TimeToday will be the default (current default by Github).
+//
+// language can be filtered by applying a programing language by your choice
+// The input must be a known language by Github and be part of GetLanguages().
+// Further more it must be the Language.URLName and not the human readable Language.Name.
+// If language is an empty string "All languages" will be applied (current default by Github).
 func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	var developers []Developer
 
+	// Generate URL
 	u, err := t.generateURL(modeDevelopers, time, language)
 	if err != nil {
 		return developers, err
 	}
 
+	// Get document
 	doc, err := goquery.NewDocument(u.String())
 	if err != nil {
 		return developers, err
 	}
 
+	// Query information
 	doc.Find(".user-leaderboard-list-item").Each(func(i int, s *goquery.Selection) {
-
 		name := s.Find(".user-leaderboard-list-name a").Text()
 		name = strings.TrimSpace(name)
 		name = strings.Split(name, " ")[0]
@@ -181,7 +200,7 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	return developers, nil
 }
 
-// newDeveloper creates a new Developer
+// newDeveloper is a utility function to create a new Developer
 func (t *Trending) newDeveloper(name, fullName string, linkURL, avatarURL *url.URL) Developer {
 	return Developer{
 		ID:          t.getUserIDBasedOnAvatarURL(avatarURL),
@@ -192,30 +211,30 @@ func (t *Trending) newDeveloper(name, fullName string, linkURL, avatarURL *url.U
 	}
 }
 
+// trimBraces will remove braces "(" & ")" from the string
 func (t *Trending) trimBraces(text string) string {
 	text = strings.TrimSpace(text)
 	text = strings.TrimLeft(text, "(")
 	text = strings.TrimRight(text, ")")
-
 	return text
 }
 
+// buildAvatarURL will build a url.URL out of the Avatar URL provided by Github
 func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
-	var avatarURL *url.URL
-	var err error
-
-	if exists == true {
-		avatarURL, err = url.Parse(avatar)
-		if err != nil {
-			avatarURL = nil
-		} else {
-			// Remove s parameter
-			// The "s" parameter controls the size of the avatar
-			q := avatarURL.Query()
-			q.Del("s")
-			avatarURL.RawQuery = q.Encode()
-		}
+	if exists == false {
+		return nil
 	}
+
+	avatarURL, err := url.Parse(avatar)
+	if err != nil {
+		return nil
+	}
+
+	// Remove s parameter
+	// The "s" parameter controls the size of the avatar
+	q := avatarURL.Query()
+	q.Del("s")
+	avatarURL.RawQuery = q.Encode()
 
 	return avatarURL
 }
@@ -223,16 +242,23 @@ func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
 // getUserIDBasedOnAvatarLink determines the UserID based on an avatar link avatarURL
 func (t *Trending) getUserIDBasedOnAvatarURL(avatarURL *url.URL) int {
 	id := 0
-	if avatarURL != nil {
-		re := regexp.MustCompile("u/([0-9]+)")
-		if matches := re.FindStringSubmatch(avatarURL.Path); len(matches) >= 2 && len(matches[1]) > 0 {
-			id, _ = strconv.Atoi(matches[1])
-		}
+	if avatarURL == nil {
+		return id
 	}
 
+	re := regexp.MustCompile("u/([0-9]+)")
+	if matches := re.FindStringSubmatch(avatarURL.Path); len(matches) >= 2 && len(matches[1]) > 0 {
+		id, _ = strconv.Atoi(matches[1])
+	}
 	return id
 }
 
+// getLanguageAndStars retrieve the language and the number of stars out of meta information.
+// meta is like
+//		JavaScript &#8226; 1,624 stars today &#8226; Built by ...
+// or
+//		1,624 stars today &#8226; Built by ...
+// Returns will be the language (JavaScript, if there is one) and the number of stars (1624).
 func (t *Trending) getLanguageAndStars(meta string) (string, int) {
 	splittedMetaData := strings.Split(meta, string('•'))
 	language := ""
@@ -262,6 +288,9 @@ func (t *Trending) getLanguageAndStars(meta string) (string, int) {
 	return language, starsInt
 }
 
+// appendBaseHostToPath will add the base host to a relative url urlStr.
+//
+// A urlStr like "/trending" will be returned as https://github.com/trending
 func (t *Trending) appendBaseHostToPath(urlStr string, exists bool) *url.URL {
 	if exists == false {
 		return nil
@@ -275,6 +304,7 @@ func (t *Trending) appendBaseHostToPath(urlStr string, exists bool) *url.URL {
 	return t.BaseURL.ResolveReference(rel)
 }
 
+// getProjectName will return the project name in format owner/repository
 func (t *Trending) getProjectName(name string) string {
 	trimmedNameParts := []string{}
 
@@ -286,6 +316,9 @@ func (t *Trending) getProjectName(name string) string {
 	return strings.Join(trimmedNameParts, "")
 }
 
+// generateURL will generate the correct URL to call the github site.
+//
+// Depending on mode, time and language it will set the correct pathes and query parameters.
 func (t *Trending) generateURL(mode, time, language string) (*url.URL, error) {
 	urlStr := urlTrendingPath
 	if mode == modeDevelopers {
