@@ -119,7 +119,7 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 		return languages, err
 	}
 
-	doc.Find("ul.language-filter-list a").Each(func(i int, s *goquery.Selection) {
+	doc.Find(mainSelector).Each(func(i int, s *goquery.Selection) {
 		languageAddress, _ := s.Attr("href")
 		languageURLName := ""
 
