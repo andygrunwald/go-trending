@@ -18,7 +18,10 @@ import (
 //		projects, err := trend.GetProjects(trending.TimeToday, "")
 //		...
 func NewTrending() *Trending {
-	t := Trending{}
+	baseURL, _ := url.Parse(defaultBaseURL)
+	t := Trending{
+		BaseURL: baseURL,
+	}
 	return &t
 }
 
@@ -258,19 +261,17 @@ func (t *Trending) getLanguageAndStars(meta string) (string, int) {
 	return language, starsInt
 }
 
-func (t *Trending) appendBaseHostToPath(address string, exists bool) *url.URL {
+func (t *Trending) appendBaseHostToPath(urlStr string, exists bool) *url.URL {
 	if exists == false {
 		return nil
 	}
 
-	u, err := url.Parse(baseHost)
+	rel, err := url.Parse(urlStr)
 	if err != nil {
 		return nil
 	}
 
-	u.Path = address
-
-	return u
+	return t.BaseURL.ResolveReference(rel)
 }
 
 func (t *Trending) getProjectName(name string) string {
@@ -285,16 +286,12 @@ func (t *Trending) getProjectName(name string) string {
 }
 
 func (t *Trending) generateURL(mode, time, language string) (*url.URL, error) {
-	parseURL := baseHost + basePath
+	urlStr := urlTrendingPath
 	if mode == modeDevelopers {
-		parseURL += developersPath
+		urlStr += urlDevelopersPath
 	}
 
-	u, err := url.Parse(parseURL)
-	if err != nil {
-		return nil, err
-	}
-
+	u := t.appendBaseHostToPath(urlStr, true)
 	q := u.Query()
 	if len(time) > 0 {
 		q.Set("since", time)

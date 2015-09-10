@@ -17,20 +17,14 @@ const (
 	TimeMonth = "monthly"
 )
 
-// Internal used constants related to github`s website / structure.
 const (
-	baseHost       = "https://github.com"
-	basePath       = "/trending"
-	developersPath = "/developers"
-)
+	// Base URL for the github website
+	defaultBaseURL = "https://github.com"
+	// Relative URL for trending repositories
+	urlTrendingPath = "/trending"
+	// Relative URL for trending developers
+	urlDevelopersPath = "/developers"
 
-// Internal used constants to determine the requested resource.
-// The trending page of github provides repositories, developers and languages.
-// These constants are used (amongst others) to generate the correct url
-// to recieve the resources.
-// We don`t export these constants, because the trending package provides
-// dedicated methods to differ between repositories, developers and languages.
-const (
 	modeRepositories = "repositories"
 	modeDevelopers   = "developers"
 	modeLanguages    = "languages"
@@ -52,6 +46,11 @@ const (
 //		}
 //
 type Trending struct {
+	// Base URL for requests.
+	// Defaults to the public GitHub website, but can be set to a domain endpoint to use with GitHub Enterprise.
+	// BaseURL should always be specified with a trailing slash.
+	BaseURL *url.URL
+
 	document *goquery.Document
 }
 
