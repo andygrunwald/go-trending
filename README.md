@@ -17,6 +17,7 @@ This package were inspired by [rochefort/git-trend](https://github.com/rochefort
 * Get trending languages
 * Get all programing languages known by GitHub
 * Filtering by time and (programing) language
+* Support for [GitHub Enterprise](https://enterprise.github.com/)
 
 ## Installation
 
