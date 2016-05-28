@@ -32,7 +32,7 @@ const (
 
 // Trending reflects the main datastructure of this package.
 // It doesn`t provide an exported state, but based on this the methods are called.
-// To recieve a new instance just add
+// To receive a new instance just add
 //
 //		package main
 //
@@ -78,11 +78,11 @@ type Project struct {
 	// URL is the http(s) address of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures".
 	URL *url.URL
 
-	// ContributerURL is the http(s) address of the contributers page of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures/graphs/contributors".
+	// ContributerURL is the http(s) address of the contributors page of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures/graphs/contributors".
 	ContributerURL *url.URL
 
 	// Contributer are a collection of Developer.
-	// Be aware that this collection don`t covers all contributer.
+	// Be aware that this collection don`t covers all contributor.
 	// Only those who are mentioned at githubs trending page.
 	Contributer []Developer
 }

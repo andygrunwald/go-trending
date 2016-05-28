@@ -105,14 +105,14 @@ func TestGetDevelopers_Today(t *testing.T) {
 	backScreenURL, _ := url.Parse(server.URL + "/black-screen")
 	backScreenAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/14174343?v=3")
 	want := []Developer{
-		Developer{
+		{
 			ID:          13479175,
 			DisplayName: "gloomyson",
 			FullName:    "Ryuta",
 			URL:         gloomysonURL,
 			Avatar:      gloomysonAvatar,
 		},
-		Developer{
+		{
 			ID:          14174343,
 			DisplayName: "black-screen",
 			FullName:    "Black Screen",
@@ -170,11 +170,11 @@ func TestGetTrendingLanguages(t *testing.T) {
 	uGo, _ := url.Parse("https://github.com/trending?l=go")
 	uJava, _ := url.Parse("https://github.com/trending?l=java")
 	want := []Language{
-		Language{"All languages", "", uAll},
-		Language{"Unknown languages", "unknown", uUnknown},
-		Language{"CSS", "css", uCSS},
-		Language{"Go", "go", uGo},
-		Language{"Java", "java", uJava},
+		{"All languages", "", uAll},
+		{"Unknown languages", "unknown", uUnknown},
+		{"CSS", "css", uCSS},
+		{"Go", "go", uGo},
+		{"Java", "java", uJava},
 	}
 
 	if !reflect.DeepEqual(languages, want) {
@@ -226,14 +226,14 @@ func TestGetLanguages(t *testing.T) {
 	uANTLR, _ := url.Parse("https://github.com/trending?l=antlr")
 
 	want := []Language{
-		Language{"ABAP", "abap", uAbap},
-		Language{"ActionScript", "as3", uActionScript},
-		Language{"Ada", "ada", uAda},
-		Language{"Agda", "agda", uAgda},
-		Language{"AGS Script", "ags-script", uAGS},
-		Language{"Alloy", "alloy", uAlloy},
-		Language{"AMPL", "ampl", uAMPL},
-		Language{"ANTLR", "antlr", uANTLR},
+		{"ABAP", "abap", uAbap},
+		{"ActionScript", "as3", uActionScript},
+		{"Ada", "ada", uAda},
+		{"Agda", "agda", uAgda},
+		{"AGS Script", "ags-script", uAGS},
+		{"Alloy", "alloy", uAlloy},
+		{"AMPL", "ampl", uAMPL},
+		{"ANTLR", "antlr", uANTLR},
 	}
 
 	if !reflect.DeepEqual(languages, want) {
@@ -322,7 +322,7 @@ func TestGetProjects(t *testing.T) {
 	bnoordhuisAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/275871?v=3")
 
 	want := []Project{
-		Project{
+		{
 			Name:           "gloomyson/StarCraft",
 			Owner:          "gloomyson",
 			RepositoryName: "StarCraft",
@@ -332,7 +332,7 @@ func TestGetProjects(t *testing.T) {
 			URL:            uStarcraft,
 			ContributerURL: uStarcraftcontributor,
 			Contributer: []Developer{
-				Developer{
+				{
 					ID:          13479175,
 					DisplayName: "gloomyson",
 					FullName:    "",
@@ -341,7 +341,7 @@ func TestGetProjects(t *testing.T) {
 				},
 			},
 		},
-		Project{
+		{
 			Name:           "black-screen/black-screen",
 			Owner:          "black-screen",
 			RepositoryName: "black-screen",
@@ -351,21 +351,21 @@ func TestGetProjects(t *testing.T) {
 			URL:            uBlackScreen,
 			ContributerURL: uBlackScreencontributor,
 			Contributer: []Developer{
-				Developer{
+				{
 					ID:          188928,
 					DisplayName: "shockone",
 					FullName:    "",
 					URL:         shockoneURL,
 					Avatar:      shockoneAvatar,
 				},
-				Developer{
+				{
 					ID:          6943514,
 					DisplayName: "G07cha",
 					FullName:    "",
 					URL:         g07chaURL,
 					Avatar:      g07chaAvatar,
 				},
-				Developer{
+				{
 					ID:          1307169,
 					DisplayName: "RobertoUa",
 					FullName:    "",
@@ -374,7 +374,7 @@ func TestGetProjects(t *testing.T) {
 				},
 			},
 		},
-		Project{
+		{
 			Name:           "nodejs/node",
 			Owner:          "nodejs",
 			RepositoryName: "node",
@@ -384,14 +384,14 @@ func TestGetProjects(t *testing.T) {
 			URL:            uNode,
 			ContributerURL: uNodecontributor,
 			Contributer: []Developer{
-				Developer{
+				{
 					ID:          80,
 					DisplayName: "ry",
 					FullName:    "",
 					URL:         ryURL,
 					Avatar:      ryAvatar,
 				},
-				Developer{
+				{
 					ID:          275871,
 					DisplayName: "bnoordhuis",
 					FullName:    "",

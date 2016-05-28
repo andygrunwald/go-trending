@@ -71,7 +71,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		contributorPath, exists := s.Find(".repo-list-meta a").First().Attr("href")
 		contributorURL := t.appendBaseHostToPath(contributorPath, exists)
 
-		// Collect contributer
+		// Collect contributor
 		var developer []Developer
 		s.Find(".repo-list-meta a img").Each(func(j int, devSelection *goquery.Selection) {
 			devName, exists := devSelection.Attr("title")
