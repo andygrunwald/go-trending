@@ -71,7 +71,7 @@ type Project struct {
 	// Sometimes Language is an empty string, because Github can`t determine the (main) programing language (like for "google/deepdream").
 	Language string
 
-	// Stars is the number of github stars this project recieved in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants).
+	// Stars is the number of github stars this project received in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants).
 	// This number don`t reflect the overall stars of the project.
 	Stars int
 

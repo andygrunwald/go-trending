@@ -302,11 +302,11 @@ func TestGetProjects(t *testing.T) {
 	}
 
 	uStarcraft, _ := url.Parse(server.URL + "/gloomyson/StarCraft")
-	uStarcraftContributer, _ := url.Parse(server.URL + "/gloomyson/StarCraft/graphs/contributors")
+	uStarcraftcontributor, _ := url.Parse(server.URL + "/gloomyson/StarCraft/graphs/contributors")
 	uBlackScreen, _ := url.Parse(server.URL + "/black-screen/black-screen")
-	uBlackScreenContributer, _ := url.Parse(server.URL + "/black-screen/black-screen/graphs/contributors")
+	uBlackScreencontributor, _ := url.Parse(server.URL + "/black-screen/black-screen/graphs/contributors")
 	uNode, _ := url.Parse(server.URL + "/nodejs/node")
-	uNodeContributer, _ := url.Parse(server.URL + "/nodejs/node/graphs/contributors")
+	uNodecontributor, _ := url.Parse(server.URL + "/nodejs/node/graphs/contributors")
 
 	gloomysonURL, _ := url.Parse(server.URL + "/gloomyson")
 	gloomysonAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/13479175?v=3")
@@ -330,7 +330,7 @@ func TestGetProjects(t *testing.T) {
 			Language:       "JavaScript",
 			Stars:          1624,
 			URL:            uStarcraft,
-			ContributerURL: uStarcraftContributer,
+			ContributerURL: uStarcraftcontributor,
 			Contributer: []Developer{
 				Developer{
 					ID:          13479175,
@@ -349,7 +349,7 @@ func TestGetProjects(t *testing.T) {
 			Language:       "JavaScript",
 			Stars:          624,
 			URL:            uBlackScreen,
-			ContributerURL: uBlackScreenContributer,
+			ContributerURL: uBlackScreencontributor,
 			Contributer: []Developer{
 				Developer{
 					ID:          188928,
@@ -382,7 +382,7 @@ func TestGetProjects(t *testing.T) {
 			Language:       "JavaScript",
 			Stars:          348,
 			URL:            uNode,
-			ContributerURL: uNodeContributer,
+			ContributerURL: uNodecontributor,
 			Contributer: []Developer{
 				Developer{
 					ID:          80,

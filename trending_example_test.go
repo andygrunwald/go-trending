@@ -23,10 +23,10 @@ func ExampleTrending_GetProjects() {
 	if len(projects) > 0 && onlyGoProjects == true {
 		fmt.Println("Projects (filtered by Go) recieved.")
 	} else {
-		fmt.Printf("Number of projectes recieved: %d (filtered by golang %v)", len(projects), onlyGoProjects)
+		fmt.Printf("Number of projectes received: %d (filtered by golang %v)", len(projects), onlyGoProjects)
 	}
 
-	// Output: Projects (filtered by Go) recieved.
+	// Output: Projects (filtered by Go) received.
 }
 
 func ExampleTrending_GetLanguages() {
@@ -40,10 +40,10 @@ func ExampleTrending_GetLanguages() {
 	if len(languages) > 15 {
 		fmt.Println("Languages recieved.")
 	} else {
-		fmt.Printf("Number of languages recieved: %d", len(languages))
+		fmt.Printf("Number of languages received: %d", len(languages))
 	}
 
-	// Output: Languages recieved.
+	// Output: Languages received.
 }
 
 func ExampleTrending_GetDevelopers() {
@@ -56,10 +56,10 @@ func ExampleTrending_GetDevelopers() {
 	if len(developers) > 0 {
 		fmt.Println("Developers recieved.")
 	} else {
-		fmt.Printf("Number of developer recieved: %d", len(developers))
+		fmt.Printf("Number of developer received: %d", len(developers))
 	}
 
-	// Output: Developers recieved.
+	// Output: Developers received.
 }
 
 func ExampleTrending_GetTrendingLanguages() {
@@ -72,8 +72,8 @@ func ExampleTrending_GetTrendingLanguages() {
 	if len(languages) > 0 {
 		fmt.Println("Trending Languages recieved.")
 	} else {
-		fmt.Printf("Number of languages recieved: %d", len(languages))
+		fmt.Printf("Number of languages received: %d", len(languages))
 	}
 
-	// Output: Trending Languages recieved.
+	// Output: Trending Languages received.
 }

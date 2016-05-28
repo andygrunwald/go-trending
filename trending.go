@@ -68,8 +68,8 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		meta := s.Find(".repo-list-meta").Text()
 		language, stars := t.getLanguageAndStars(meta)
 
-		contributerPath, exists := s.Find(".repo-list-meta a").First().Attr("href")
-		contributerURL := t.appendBaseHostToPath(contributerPath, exists)
+		contributorPath, exists := s.Find(".repo-list-meta a").First().Attr("href")
+		contributorURL := t.appendBaseHostToPath(contributorPath, exists)
 
 		// Collect contributer
 		var developer []Developer
@@ -91,7 +91,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			Language:       language,
 			Stars:          stars,
 			URL:            projectURL,
-			ContributerURL: contributerURL,
+			ContributerURL: contributorURL,
 			Contributer:    developer,
 		}
 		projects = append(projects, p)
@@ -113,7 +113,7 @@ func (t *Trending) GetTrendingLanguages() ([]Language, error) {
 	return t.generateLanguages("ul.language-filter-list a")
 }
 
-// generateLanguages will retreive the languages out of the github document.
+// generateLanguages will retrieve the languages out of the github document.
 // Trending languages are shown on the right side as a small list.
 // Other languages are hidden in a dropdown at this site
 func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
