@@ -103,7 +103,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages("div.select-menu-item a")
+	return t.generateLanguages("div.one-fourth div.select-menu a")
 }
 
 // GetTrendingLanguages will return a slice of Language that are currently trending.

@@ -21,7 +21,7 @@ func ExampleTrending_GetProjects() {
 	}
 
 	if len(projects) > 0 && onlyGoProjects == true {
-		fmt.Println("Projects (filtered by Go) recieved.")
+		fmt.Println("Projects (filtered by Go) received.")
 	} else {
 		fmt.Printf("Number of projectes received: %d (filtered by golang %v)", len(projects), onlyGoProjects)
 	}
@@ -38,7 +38,7 @@ func ExampleTrending_GetLanguages() {
 
 	// We need more as 15 languages, because 9 are trending languages
 	if len(languages) > 15 {
-		fmt.Println("Languages recieved.")
+		fmt.Println("Languages received.")
 	} else {
 		fmt.Printf("Number of languages received: %d", len(languages))
 	}
@@ -54,7 +54,7 @@ func ExampleTrending_GetDevelopers() {
 	}
 
 	if len(developers) > 0 {
-		fmt.Println("Developers recieved.")
+		fmt.Println("Developers received.")
 	} else {
 		fmt.Printf("Number of developer received: %d", len(developers))
 	}
@@ -70,7 +70,7 @@ func ExampleTrending_GetTrendingLanguages() {
 	}
 
 	if len(languages) > 0 {
-		fmt.Println("Trending Languages recieved.")
+		fmt.Println("Trending Languages received.")
 	} else {
 		fmt.Printf("Number of languages received: %d", len(languages))
 	}
