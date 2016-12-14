@@ -49,31 +49,42 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	}
 
 	// Query our information
-	doc.Find(".repo-list-item").Each(func(i int, s *goquery.Selection) {
+	doc.Find("ol.repo-list li").Each(func(i int, s *goquery.Selection) {
 
 		// Collect project information
-		name := t.getProjectName(s.Find(".repo-list-name a").Text())
+		name := t.getProjectName(s.Find("h3 a").Text())
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
 		splittedName := strings.SplitAfterN(name, "/", 2)
 		owner := splittedName[0][:len(splittedName[0])-1]
-		repositoryName := splittedName[1]
+		owner = strings.TrimSpace(owner)
+		repositoryName := strings.TrimSpace(splittedName[1])
 
-		address, exists := s.Find(".repo-list-name a").First().Attr("href")
+		address, exists := s.Find("h3 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
 
-		description := s.Find(".repo-list-description").Text()
+		description := s.Find(".py-1 p").Text()
 		description = strings.TrimSpace(description)
 
-		meta := s.Find(".repo-list-meta").Text()
-		language, stars := t.getLanguageAndStars(meta)
+		language := s.Find("div.f6 span").Eq(1).Text()
+		language = strings.TrimSpace(language)
 
-		contributorPath, exists := s.Find(".repo-list-meta a").First().Attr("href")
+		starsString := s.Find("div.f6 a").First().Text()
+		starsString = strings.TrimSpace(starsString)
+		starsString = strings.Replace(starsString, ",", "", 1)
+		starsString = strings.Replace(starsString, ".", "", 1)
+		stars, err := strconv.Atoi(starsString)
+		if err != nil {
+			stars = 0
+		}
+
+		contributerSelection := s.Find("div.f6 a").Eq(2)
+		contributorPath, exists := contributerSelection.Attr("href")
 		contributorURL := t.appendBaseHostToPath(contributorPath, exists)
 
 		// Collect contributor
 		var developer []Developer
-		s.Find(".repo-list-meta a img").Each(func(j int, devSelection *goquery.Selection) {
+		contributerSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
 			devName, exists := devSelection.Attr("title")
 			linkURL := t.appendBaseHostToPath(devName, exists)
 
@@ -138,13 +149,13 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 
 		filterURL, _ := url.Parse(languageAddress)
 
-		re := regexp.MustCompile("github.com/trending\\?l=(.+)")
+		re := regexp.MustCompile("github.com/trending/([^/\\?]*)")
 		if matches := re.FindStringSubmatch(languageAddress); len(matches) >= 2 && len(matches[1]) > 0 {
 			languageURLName = matches[1]
 		}
 
 		language := Language{
-			Name:    s.Text(),
+			Name:    strings.TrimSpace(s.Text()),
 			URLName: languageURLName,
 			URL:     filterURL,
 		}
@@ -251,41 +262,6 @@ func (t *Trending) getUserIDBasedOnAvatarURL(avatarURL *url.URL) int {
 		id, _ = strconv.Atoi(matches[1])
 	}
 	return id
-}
-
-// getLanguageAndStars retrieve the language and the number of stars out of meta information.
-// meta is like
-//		JavaScript &#8226; 1,624 stars today &#8226; Built by ...
-// or
-//		1,624 stars today &#8226; Built by ...
-// Returns will be the language (JavaScript, if there is one) and the number of stars (1624).
-func (t *Trending) getLanguageAndStars(meta string) (string, int) {
-	splittedMetaData := strings.Split(meta, string('•'))
-	language := ""
-	starsIndex := 1
-
-	// If we got 2 parts we only got "stars" and "Built by", but no language
-	if len(splittedMetaData) == 2 {
-		starsIndex = 0
-	} else {
-		language = strings.TrimSpace(splittedMetaData[0])
-	}
-
-	stars := strings.TrimSpace(splittedMetaData[starsIndex])
-	// "stars" contain now a string like
-	// 105 stars today
-	// 1,472 stars this week
-	// 2,552 stars this month
-	stars = strings.SplitN(stars, " ", 2)[0]
-	stars = strings.Replace(stars, ",", "", 1)
-	stars = strings.Replace(stars, ".", "", 1)
-
-	starsInt, err := strconv.Atoi(stars)
-	if err != nil {
-		starsInt = 0
-	}
-
-	return language, starsInt
 }
 
 // appendBaseHostToPath will add the base host to a relative url urlStr.

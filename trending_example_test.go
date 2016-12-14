@@ -48,7 +48,7 @@ func ExampleTrending_GetLanguages() {
 
 func ExampleTrending_GetDevelopers() {
 	trend := trending.NewTrending()
-	developers, err := trend.GetDevelopers(trending.TimeWeek, "")
+	developers, err := trend.GetDevelopers(trending.TimeToday, "")
 	if err != nil {
 		log.Fatal(err)
 	}

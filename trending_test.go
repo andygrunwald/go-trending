@@ -100,24 +100,24 @@ func TestGetDevelopers_Today(t *testing.T) {
 		t.Errorf("GetDevelopers returned error: %v", err)
 	}
 
-	gloomysonURL, _ := url.Parse(server.URL + "/gloomyson")
-	gloomysonAvatar, _ := url.Parse("https://avatars2.githubusercontent.com/u/13479175?v=3")
-	backScreenURL, _ := url.Parse(server.URL + "/black-screen")
-	backScreenAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/14174343?v=3")
+	cloudsonURL, _ := url.Parse(server.URL + "/cloudson")
+	cloudsonAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/94096?v=3")
+	zeitURL, _ := url.Parse(server.URL + "/zeit")
+	zeitAvatar, _ := url.Parse("https://avatars3.githubusercontent.com/u/14985020?v=3")
 	want := []Developer{
 		{
-			ID:          13479175,
-			DisplayName: "gloomyson",
-			FullName:    "Ryuta",
-			URL:         gloomysonURL,
-			Avatar:      gloomysonAvatar,
+			ID:          94096,
+			DisplayName: "cloudson",
+			FullName:    "Claudson Oliveira",
+			URL:         cloudsonURL,
+			Avatar:      cloudsonAvatar,
 		},
 		{
-			ID:          14174343,
-			DisplayName: "black-screen",
-			FullName:    "Black Screen",
-			URL:         backScreenURL,
-			Avatar:      backScreenAvatar,
+			ID:          14985020,
+			DisplayName: "zeit",
+			FullName:    "ZEIT",
+			URL:         zeitURL,
+			Avatar:      zeitAvatar,
 		},
 	}
 
@@ -164,17 +164,19 @@ func TestGetTrendingLanguages(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAll, _ := url.Parse("https://github.com/trending")
-	uUnknown, _ := url.Parse("https://github.com/trending?l=unknown")
-	uCSS, _ := url.Parse("https://github.com/trending?l=css")
-	uGo, _ := url.Parse("https://github.com/trending?l=go")
-	uJava, _ := url.Parse("https://github.com/trending?l=java")
+	uAll, _ := url.Parse("https://github.com/trending?since=daily")
+	uUnknown, _ := url.Parse("https://github.com/trending/unknown?since=daily")
+	uPHP, _ := url.Parse("https://github.com/trending/php?since=daily")
+	uGo, _ := url.Parse("https://github.com/trending/go?since=daily")
+	uJava, _ := url.Parse("https://github.com/trending/java?since=daily")
+	uJavaScript, _ := url.Parse("https://github.com/trending/javascript?since=daily")
 	want := []Language{
 		{"All languages", "", uAll},
 		{"Unknown languages", "unknown", uUnknown},
-		{"CSS", "css", uCSS},
 		{"Go", "go", uGo},
 		{"Java", "java", uJava},
+		{"JavaScript", "javascript", uJavaScript},
+		{"PHP", "php", uPHP},
 	}
 
 	if !reflect.DeepEqual(languages, want) {
@@ -216,14 +218,14 @@ func TestGetLanguages(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAbap, _ := url.Parse("https://github.com/trending?l=abap")
-	uActionScript, _ := url.Parse("https://github.com/trending?l=as3")
-	uAda, _ := url.Parse("https://github.com/trending?l=ada")
-	uAgda, _ := url.Parse("https://github.com/trending?l=agda")
-	uAGS, _ := url.Parse("https://github.com/trending?l=ags-script")
-	uAlloy, _ := url.Parse("https://github.com/trending?l=alloy")
-	uAMPL, _ := url.Parse("https://github.com/trending?l=ampl")
-	uANTLR, _ := url.Parse("https://github.com/trending?l=antlr")
+	uAbap, _ := url.Parse("https://github.com/trending/abap?since=daily")
+	uActionScript, _ := url.Parse("https://github.com/trending/as3?since=daily")
+	uAda, _ := url.Parse("https://github.com/trending/ada?since=daily")
+	uAgda, _ := url.Parse("https://github.com/trending/agda?since=daily")
+	uAGS, _ := url.Parse("https://github.com/trending/ags-script?since=daily")
+	uAlloy, _ := url.Parse("https://github.com/trending/alloy?since=daily")
+	uAMPL, _ := url.Parse("https://github.com/trending/ampl?since=daily")
+	uANTLR, _ := url.Parse("https://github.com/trending/antlr?since=daily")
 
 	want := []Language{
 		{"ABAP", "abap", uAbap},
@@ -260,7 +262,7 @@ func TestGetLanguages_NoConent(t *testing.T) {
 	}
 }
 
-func TestGetProjects_NoConent(t *testing.T) {
+func TestGetProjects_NoContent(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -289,114 +291,82 @@ func TestGetProjects(t *testing.T) {
 	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		testFormValues(t, r, values{
-			"since": "monthly",
-			"l":     "java",
+			"since": "daily",
+			"l":     "go",
 		})
 		website := getContentOfFile("./tests/github.com_trending.html")
 		fmt.Fprint(w, string(website))
 	})
 
-	projects, err := client.GetProjects(TimeMonth, "java")
+	projects, err := client.GetProjects(TimeToday, "go")
 	if err != nil {
 		t.Errorf("GetProjects returned error: %v", err)
 	}
 
-	uStarcraft, _ := url.Parse(server.URL + "/gloomyson/StarCraft")
-	uStarcraftcontributor, _ := url.Parse(server.URL + "/gloomyson/StarCraft/graphs/contributors")
-	uBlackScreen, _ := url.Parse(server.URL + "/black-screen/black-screen")
-	uBlackScreencontributor, _ := url.Parse(server.URL + "/black-screen/black-screen/graphs/contributors")
-	uNode, _ := url.Parse(server.URL + "/nodejs/node")
-	uNodecontributor, _ := url.Parse(server.URL + "/nodejs/node/graphs/contributors")
+	uGitql, _ := url.Parse(server.URL + "/cloudson/gitql")
+	uGitqlContributor, _ := url.Parse(server.URL + "/cloudson/gitql/graphs/contributors")
+	uNeveragaindottech, _ := url.Parse(server.URL + "/neveragaindottech/neveragaindottech.github.io")
+	uNeveragaindottechContributor, _ := url.Parse(server.URL + "/neveragaindottech/neveragaindottech.github.io/graphs/contributors")
 
-	gloomysonURL, _ := url.Parse(server.URL + "/gloomyson")
-	gloomysonAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/13479175?v=3")
-	shockoneURL, _ := url.Parse(server.URL + "/shockone")
-	shockoneAvatar, _ := url.Parse("https://avatars3.githubusercontent.com/u/188928?v=3")
-	g07chaURL, _ := url.Parse(server.URL + "/G07cha")
-	g07chaAvatar, _ := url.Parse("https://avatars3.githubusercontent.com/u/6943514?v=3")
-	robertoUaURL, _ := url.Parse(server.URL + "/RobertoUa")
-	robertoUaAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/1307169?v=3")
-	ryURL, _ := url.Parse(server.URL + "/ry")
-	ryAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/80?v=3")
-	bnoordhuisURL, _ := url.Parse(server.URL + "/bnoordhuis")
-	bnoordhuisAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/275871?v=3")
+	cloudsonURL, _ := url.Parse(server.URL + "/cloudson")
+	cloudsonAvatar, _ := url.Parse("https://avatars2.githubusercontent.com/u/94096?v=3")
+	emhoracekURL, _ := url.Parse(server.URL + "/emhoracek")
+	emhoracekAvatar, _ := url.Parse("https://avatars3.githubusercontent.com/u/5353499?v=3")
+	zestypingURL, _ := url.Parse(server.URL + "/zestyping")
+	zestypingAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/236086?v=3")
+	saboURL, _ := url.Parse(server.URL + "/sabo")
+	saboAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/1196568?v=3")
 
 	want := []Project{
 		{
-			Name:           "gloomyson/StarCraft",
-			Owner:          "gloomyson",
-			RepositoryName: "StarCraft",
-			Description:    "HTML5 version for StarCraft game",
-			Language:       "JavaScript",
-			Stars:          1624,
-			URL:            uStarcraft,
-			ContributerURL: uStarcraftcontributor,
+			Name:           "cloudson / gitql",
+			Owner:          "cloudson",
+			RepositoryName: "gitql",
+			Description:    "A git query language",
+			Language:       "Go",
+			Stars:          1824,
+			URL:            uGitql,
+			ContributerURL: uGitqlContributor,
 			Contributer: []Developer{
 				{
-					ID:          13479175,
-					DisplayName: "gloomyson",
+					ID:          94096,
+					DisplayName: "cloudson",
 					FullName:    "",
-					URL:         gloomysonURL,
-					Avatar:      gloomysonAvatar,
+					URL:         cloudsonURL,
+					Avatar:      cloudsonAvatar,
 				},
 			},
 		},
 		{
-			Name:           "black-screen/black-screen",
-			Owner:          "black-screen",
-			RepositoryName: "black-screen",
-			Description:    "A terminal emulator for the 21st century.",
-			Language:       "JavaScript",
-			Stars:          624,
-			URL:            uBlackScreen,
-			ContributerURL: uBlackScreencontributor,
+			Name:           "neveragaindottech / neveragaindottech.github.io",
+			Owner:          "neveragaindottech",
+			RepositoryName: "neveragaindottech.github.io",
+			Description:    "Source files for the neveragain.tech site",
+			Language:       "HTML",
+			Stars:          238,
+			URL:            uNeveragaindottech,
+			ContributerURL: uNeveragaindottechContributor,
 			Contributer: []Developer{
 				{
-					ID:          188928,
-					DisplayName: "shockone",
+					ID:          5353499,
+					DisplayName: "emhoracek",
 					FullName:    "",
-					URL:         shockoneURL,
-					Avatar:      shockoneAvatar,
+					URL:         emhoracekURL,
+					Avatar:      emhoracekAvatar,
 				},
 				{
-					ID:          6943514,
-					DisplayName: "G07cha",
+					ID:          236086,
+					DisplayName: "zestyping",
 					FullName:    "",
-					URL:         g07chaURL,
-					Avatar:      g07chaAvatar,
+					URL:         zestypingURL,
+					Avatar:      zestypingAvatar,
 				},
 				{
-					ID:          1307169,
-					DisplayName: "RobertoUa",
+					ID:          1196568,
+					DisplayName: "sabo",
 					FullName:    "",
-					URL:         robertoUaURL,
-					Avatar:      robertoUaAvatar,
-				},
-			},
-		},
-		{
-			Name:           "nodejs/node",
-			Owner:          "nodejs",
-			RepositoryName: "node",
-			Description:    "✨Future Node.js releases will be from this repo. ✨",
-			Language:       "JavaScript",
-			Stars:          348,
-			URL:            uNode,
-			ContributerURL: uNodecontributor,
-			Contributer: []Developer{
-				{
-					ID:          80,
-					DisplayName: "ry",
-					FullName:    "",
-					URL:         ryURL,
-					Avatar:      ryAvatar,
-				},
-				{
-					ID:          275871,
-					DisplayName: "bnoordhuis",
-					FullName:    "",
-					URL:         bnoordhuisURL,
-					Avatar:      bnoordhuisAvatar,
+					URL:         saboURL,
+					Avatar:      saboAvatar,
 				},
 			},
 		},
