@@ -73,18 +73,18 @@ type Project struct {
 
 	// Stars is the number of github stars this project received in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants).
 	// This number don`t reflect the overall stars of the project.
-	Stars int
+	Stars          int
 
 	// URL is the http(s) address of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures".
-	URL *url.URL
+	URL            *url.URL
 
-	// ContributerURL is the http(s) address of the contributors page of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures/graphs/contributors".
-	ContributerURL *url.URL
+	// ContributorURL is the http(s) address of the contributors page of the project reflected as url.URL datastructure like "https://github.com/Workiva/go-datastructures/graphs/contributors".
+	ContributorURL *url.URL
 
-	// Contributer are a collection of Developer.
+	// Contributor are a collection of Developer.
 	// Be aware that this collection don`t covers all contributor.
 	// Only those who are mentioned at githubs trending page.
-	Contributer []Developer
+	Contributor    []Developer
 }
 
 // Language reflects a single (programing) language offered by github for filtering.

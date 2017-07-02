@@ -102,8 +102,8 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			Language:       language,
 			Stars:          stars,
 			URL:            projectURL,
-			ContributerURL: contributorURL,
-			Contributer:    developer,
+			ContributorURL: contributorURL,
+			Contributor:    developer,
 		}
 		projects = append(projects, p)
 	})

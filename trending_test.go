@@ -327,8 +327,8 @@ func TestGetProjects(t *testing.T) {
 			Language:       "",
 			Stars:          553,
 			URL:            uGoTooling,
-			ContributerURL: uGoToolingContributor,
-			Contributer: []Developer{
+			ContributorURL: uGoToolingContributor,
+			Contributor: []Developer{
 				{
 					ID:          2237452,
 					DisplayName: "campoy",
@@ -346,8 +346,8 @@ func TestGetProjects(t *testing.T) {
 			Language:       "",
 			Stars:          120,
 			URL:            uDNSsearch,
-			ContributerURL: uDNSsearchContributor,
-			Contributer: []Developer{
+			ContributorURL: uDNSsearchContributor,
+			Contributor: []Developer{
 				{
 					ID:          86922,
 					DisplayName: "evilsocket",
