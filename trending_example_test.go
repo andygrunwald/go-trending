@@ -2,8 +2,9 @@ package trending_test
 
 import (
 	"fmt"
-	"github.com/andygrunwald/go-trending"
 	"log"
+
+	"github.com/andygrunwald/go-trending"
 )
 
 func ExampleTrending_GetProjects() {
