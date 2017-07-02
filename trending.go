@@ -114,7 +114,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages("div.select-menu .select-menu-list a")
+	return t.generateLanguages(".col-md-3 div.select-menu .select-menu-list a")
 }
 
 // GetTrendingLanguages will return a slice of Language that are currently trending.
@@ -190,19 +190,19 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	}
 
 	// Query information
-	doc.Find(".user-leaderboard-list-item").Each(func(i int, s *goquery.Selection) {
-		name := s.Find(".user-leaderboard-list-name a").Text()
+	doc.Find(".explore-content li").Each(func(i int, s *goquery.Selection) {
+		name := s.Find("h2 a").Text()
 		name = strings.TrimSpace(name)
 		name = strings.Split(name, " ")[0]
 		name = strings.TrimSpace(name)
 
-		fullName := s.Find(".user-leaderboard-list-name .full-name").Text()
+		fullName := s.Find("h2 a span").Text()
 		fullName = t.trimBraces(fullName)
 
-		linkHref, exists := s.Find(".user-leaderboard-list-name a").Attr("href")
+		linkHref, exists := s.Find("h2 a").Attr("href")
 		linkURL := t.appendBaseHostToPath(linkHref, exists)
 
-		avatar, exists := s.Find("img.leaderboard-gravatar").Attr("src")
+		avatar, exists := s.Find("a img").Attr("src")
 		avatarURL := t.buildAvatarURL(avatar, exists)
 
 		developers = append(developers, t.newDeveloper(name, fullName, linkURL, avatarURL))

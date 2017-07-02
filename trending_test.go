@@ -164,12 +164,13 @@ func TestGetTrendingLanguages(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAll, _ := url.Parse("https://github.com/trending?since=daily")
-	uUnknown, _ := url.Parse("https://github.com/trending/unknown?since=daily")
-	uPHP, _ := url.Parse("https://github.com/trending/php?since=daily")
-	uGo, _ := url.Parse("https://github.com/trending/go?since=daily")
-	uJava, _ := url.Parse("https://github.com/trending/java?since=daily")
-	uJavaScript, _ := url.Parse("https://github.com/trending/javascript?since=daily")
+	uAll, _ := url.Parse("https://github.com/trending")
+	uUnknown, _ := url.Parse("https://github.com/trending/unknown")
+	uGo, _ := url.Parse("https://github.com/trending/go")
+	uJava, _ := url.Parse("https://github.com/trending/java")
+	uJavaScript, _ := url.Parse("https://github.com/trending/javascript")
+	uPHP, _ := url.Parse("https://github.com/trending/php")
+
 	want := []Language{
 		{"All languages", "", uAll},
 		{"Unknown languages", "unknown", uUnknown},
@@ -218,18 +219,18 @@ func TestGetLanguages(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAbap, _ := url.Parse("https://github.com/trending/abap?since=daily")
-	uActionScript, _ := url.Parse("https://github.com/trending/as3?since=daily")
-	uAda, _ := url.Parse("https://github.com/trending/ada?since=daily")
-	uAgda, _ := url.Parse("https://github.com/trending/agda?since=daily")
-	uAGS, _ := url.Parse("https://github.com/trending/ags-script?since=daily")
-	uAlloy, _ := url.Parse("https://github.com/trending/alloy?since=daily")
-	uAMPL, _ := url.Parse("https://github.com/trending/ampl?since=daily")
-	uANTLR, _ := url.Parse("https://github.com/trending/antlr?since=daily")
+	uAbap, _ := url.Parse("https://github.com/trending/abap")
+	uActionScript, _ := url.Parse("https://github.com/trending/actionscript")
+	uAda, _ := url.Parse("https://github.com/trending/ada")
+	uAgda, _ := url.Parse("https://github.com/trending/agda")
+	uAGS, _ := url.Parse("https://github.com/trending/ags-script")
+	uAlloy, _ := url.Parse("https://github.com/trending/alloy")
+	uAMPL, _ := url.Parse("https://github.com/trending/ampl")
+	uANTLR, _ := url.Parse("https://github.com/trending/antlr")
 
 	want := []Language{
 		{"ABAP", "abap", uAbap},
-		{"ActionScript", "as3", uActionScript},
+		{"ActionScript", "actionscript", uActionScript},
 		{"Ada", "ada", uAda},
 		{"Agda", "agda", uAgda},
 		{"AGS Script", "ags-script", uAGS},
@@ -303,70 +304,63 @@ func TestGetProjects(t *testing.T) {
 		t.Errorf("GetProjects returned error: %v", err)
 	}
 
-	uGitql, _ := url.Parse(server.URL + "/cloudson/gitql")
-	uGitqlContributor, _ := url.Parse(server.URL + "/cloudson/gitql/graphs/contributors")
-	uNeveragaindottech, _ := url.Parse(server.URL + "/neveragaindottech/neveragaindottech.github.io")
-	uNeveragaindottechContributor, _ := url.Parse(server.URL + "/neveragaindottech/neveragaindottech.github.io/graphs/contributors")
+	// First Project
+	uGoTooling, _ := url.Parse(server.URL + "/campoy/go-tooling-workshop")
+	uGoToolingContributor, _ := url.Parse(server.URL + "/campoy/go-tooling-workshop/graphs/contributors")
+	campoyURL, _ := url.Parse(server.URL + "/campoy")
+	campoyAvatar, _ := url.Parse("https://avatars2.githubusercontent.com/u/2237452?v=3")
 
-	cloudsonURL, _ := url.Parse(server.URL + "/cloudson")
-	cloudsonAvatar, _ := url.Parse("https://avatars2.githubusercontent.com/u/94096?v=3")
-	emhoracekURL, _ := url.Parse(server.URL + "/emhoracek")
-	emhoracekAvatar, _ := url.Parse("https://avatars3.githubusercontent.com/u/5353499?v=3")
-	zestypingURL, _ := url.Parse(server.URL + "/zestyping")
-	zestypingAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/236086?v=3")
-	saboURL, _ := url.Parse(server.URL + "/sabo")
-	saboAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/1196568?v=3")
+	// Second Project
+	uDNSsearch, _ := url.Parse(server.URL + "/evilsocket/dnssearch")
+	uDNSsearchContributor, _ := url.Parse(server.URL + "/evilsocket/dnssearch/graphs/contributors")
+	evilsocketURL, _ := url.Parse(server.URL + "/evilsocket")
+	evilsocketAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/86922?v=3")
+	infoslackURL, _ := url.Parse(server.URL + "/infoslack")
+	infoslackAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/444911?v=3")
 
 	want := []Project{
 		{
-			Name:           "cloudson / gitql",
-			Owner:          "cloudson",
-			RepositoryName: "gitql",
-			Description:    "A git query language",
-			Language:       "Go",
-			Stars:          1824,
-			URL:            uGitql,
-			ContributerURL: uGitqlContributor,
+			Name:           "campoy / go-tooling-workshop",
+			Owner:          "campoy",
+			RepositoryName: "go-tooling-workshop",
+			Description:    "A workshop covering all the tools gophers use in their day to day life",
+			Language:       "",
+			Stars:          553,
+			URL:            uGoTooling,
+			ContributerURL: uGoToolingContributor,
 			Contributer: []Developer{
 				{
-					ID:          94096,
-					DisplayName: "cloudson",
+					ID:          2237452,
+					DisplayName: "campoy",
 					FullName:    "",
-					URL:         cloudsonURL,
-					Avatar:      cloudsonAvatar,
+					URL:         campoyURL,
+					Avatar:      campoyAvatar,
 				},
 			},
 		},
 		{
-			Name:           "neveragaindottech / neveragaindottech.github.io",
-			Owner:          "neveragaindottech",
-			RepositoryName: "neveragaindottech.github.io",
-			Description:    "Source files for the neveragain.tech site",
-			Language:       "HTML",
-			Stars:          238,
-			URL:            uNeveragaindottech,
-			ContributerURL: uNeveragaindottechContributor,
+			Name:           "evilsocket / dnssearch",
+			Owner:          "evilsocket",
+			RepositoryName: "dnssearch",
+			Description:    "A subdomain enumeration tool.",
+			Language:       "",
+			Stars:          120,
+			URL:            uDNSsearch,
+			ContributerURL: uDNSsearchContributor,
 			Contributer: []Developer{
 				{
-					ID:          5353499,
-					DisplayName: "emhoracek",
+					ID:          86922,
+					DisplayName: "evilsocket",
 					FullName:    "",
-					URL:         emhoracekURL,
-					Avatar:      emhoracekAvatar,
+					URL:         evilsocketURL,
+					Avatar:      evilsocketAvatar,
 				},
 				{
-					ID:          236086,
-					DisplayName: "zestyping",
+					ID:          444911,
+					DisplayName: "infoslack",
 					FullName:    "",
-					URL:         zestypingURL,
-					Avatar:      zestypingAvatar,
-				},
-				{
-					ID:          1196568,
-					DisplayName: "sabo",
-					FullName:    "",
-					URL:         saboURL,
-					Avatar:      saboAvatar,
+					URL:         infoslackURL,
+					Avatar:      infoslackAvatar,
 				},
 			},
 		},
