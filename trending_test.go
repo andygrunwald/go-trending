@@ -126,7 +126,7 @@ func TestGetDevelopers_Today(t *testing.T) {
 	}
 }
 
-func TestGetDevelopers_NoConent(t *testing.T) {
+func TestGetDevelopers_NoContent(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -185,7 +185,7 @@ func TestGetTrendingLanguages(t *testing.T) {
 	}
 }
 
-func TestGetTrendingLanguages_NoConent(t *testing.T) {
+func TestGetTrendingLanguages_NoContent(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -244,7 +244,7 @@ func TestGetLanguages(t *testing.T) {
 	}
 }
 
-func TestGetLanguages_NoConent(t *testing.T) {
+func TestGetLanguages_NoContent(t *testing.T) {
 	setup()
 	defer teardown()
 
