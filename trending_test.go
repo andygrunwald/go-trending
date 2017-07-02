@@ -91,7 +91,7 @@ func TestGetDevelopers_Today(t *testing.T) {
 		testFormValues(t, r, values{
 			"since": "daily",
 		})
-		website := getContentOfFile("./tests/github.com_trending_developers.html")
+		website := getContentOfFile("./testdata/github.com_trending_developers.html")
 		fmt.Fprint(w, string(website))
 	})
 
@@ -155,7 +155,7 @@ func TestGetTrendingLanguages(t *testing.T) {
 
 	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
-		website := getContentOfFile("./tests/github.com_trending.html")
+		website := getContentOfFile("./testdata/github.com_trending.html")
 		fmt.Fprint(w, string(website))
 	})
 
@@ -210,7 +210,7 @@ func TestGetLanguages(t *testing.T) {
 
 	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
-		website := getContentOfFile("./tests/github.com_trending.html")
+		website := getContentOfFile("./testdata/github.com_trending.html")
 		fmt.Fprint(w, string(website))
 	})
 
@@ -295,7 +295,7 @@ func TestGetProjects(t *testing.T) {
 			"since": "daily",
 			"l":     "go",
 		})
-		website := getContentOfFile("./tests/github.com_trending.html")
+		website := getContentOfFile("./testdata/github.com_trending.html")
 		fmt.Fprint(w, string(website))
 	})
 
