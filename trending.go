@@ -184,8 +184,11 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		description := s.Find(".py-1 p").Text()
 		description = strings.TrimSpace(description)
 
-		language := s.Find("div.f6 span").Eq(1).Text()
+		language := s.Find("div.f6 span").Eq(0).Text()
 		language = strings.TrimSpace(language)
+		if language == "Built by" {
+			language = ""
+		}
 
 		starsString := s.Find("div.f6 a").First().Text()
 		starsString = strings.TrimSpace(starsString)
