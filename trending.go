@@ -1,6 +1,7 @@
 package trending
 
 import (
+	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -55,6 +56,9 @@ type Trending struct {
 	// Defaults to the public GitHub website, but can be set to a domain endpoint to use with GitHub Enterprise.
 	// BaseURL should always be specified with a trailing slash.
 	BaseURL *url.URL
+
+	// Client to use for requests
+	Client *http.Client
 }
 
 // Project reflects a single trending repository.
@@ -135,9 +139,17 @@ type Developer struct {
 //		...
 //
 func NewTrending() *Trending {
+	return NewTrendingWithClient(http.DefaultClient)
+}
+
+// NewTrendingWithClient allows providing a custom http.Client to use for fetching trending items.
+// It allows setting timeouts or using 3rd party http.Client implementations, such as Google App Engine
+// urlfetch.Client.
+func NewTrendingWithClient(client *http.Client) *Trending {
 	baseURL, _ := url.Parse(defaultBaseURL)
 	t := Trending{
 		BaseURL: baseURL,
+		Client:  client,
 	}
 	return &t
 }
@@ -161,7 +173,12 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	}
 
 	// Receive document
-	doc, err := goquery.NewDocument(u.String())
+	res, err := t.Client.Get(u.String())
+	if err != nil {
+		return projects, err
+	}
+
+	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
 		return projects, err
 	}
@@ -255,7 +272,12 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 	}
 
 	// Get document
-	doc, err := goquery.NewDocument(u.String())
+	res, err := t.Client.Get(u.String())
+	if err != nil {
+		return languages, err
+	}
+
+	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
 		return languages, err
 	}
@@ -302,7 +324,12 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	}
 
 	// Get document
-	doc, err := goquery.NewDocument(u.String())
+	res, err := t.Client.Get(u.String())
+	if err != nil {
+		return developers, err
+	}
+
+	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
 		return developers, err
 	}
