@@ -3,12 +3,17 @@ package trending_test
 import (
 	"fmt"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/andygrunwald/go-trending"
 )
 
 func ExampleTrending_GetProjects() {
-	trend := trending.NewTrending()
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	trend := trending.NewTrendingWithClient(client)
 	projects, err := trend.GetProjects(trending.TimeToday, "go")
 	if err != nil {
 		log.Fatal(err)
@@ -31,7 +36,10 @@ func ExampleTrending_GetProjects() {
 }
 
 func ExampleTrending_GetLanguages() {
-	trend := trending.NewTrending()
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	trend := trending.NewTrendingWithClient(client)
 	languages, err := trend.GetLanguages()
 	if err != nil {
 		log.Fatal(err)
@@ -48,7 +56,10 @@ func ExampleTrending_GetLanguages() {
 }
 
 func ExampleTrending_GetDevelopers() {
-	trend := trending.NewTrending()
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	trend := trending.NewTrendingWithClient(client)
 	developers, err := trend.GetDevelopers(trending.TimeToday, "")
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +75,10 @@ func ExampleTrending_GetDevelopers() {
 }
 
 func ExampleTrending_GetTrendingLanguages() {
-	trend := trending.NewTrending()
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	trend := trending.NewTrendingWithClient(client)
 	languages, err := trend.GetTrendingLanguages()
 	if err != nil {
 		log.Fatal(err)
