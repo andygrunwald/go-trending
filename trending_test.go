@@ -244,6 +244,46 @@ func TestGetLanguages(t *testing.T) {
 	}
 }
 
+func TestGetLanguages_RelativePaths(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		website := getContentOfFile("./testdata/github.com_trending_relativepaths.html")
+		fmt.Fprint(w, string(website))
+	})
+
+	languages, err := client.GetLanguages()
+	if err != nil {
+		t.Errorf("GetLanguages returned error: %v", err)
+	}
+
+	uAbap, _ := url.Parse("https://github.com/trending/abap")
+	uActionScript, _ := url.Parse("https://github.com/trending/actionscript")
+	uAda, _ := url.Parse("https://github.com/trending/ada")
+	uAgda, _ := url.Parse("https://github.com/trending/agda")
+	uAGS, _ := url.Parse("https://github.com/trending/ags-script")
+	uAlloy, _ := url.Parse("https://github.com/trending/alloy")
+	uAMPL, _ := url.Parse("https://github.com/trending/ampl")
+	uANTLR, _ := url.Parse("https://github.com/trending/antlr")
+
+	want := []Language{
+		{"ABAP", "abap", uAbap},
+		{"ActionScript", "actionscript", uActionScript},
+		{"Ada", "ada", uAda},
+		{"Agda", "agda", uAgda},
+		{"AGS Script", "ags-script", uAGS},
+		{"Alloy", "alloy", uAlloy},
+		{"AMPL", "ampl", uAMPL},
+		{"ANTLR", "antlr", uANTLR},
+	}
+
+	if !reflect.DeepEqual(languages, want) {
+		t.Errorf("GetLanguages returned %+v, want %+v", languages, want)
+	}
+}
+
 func TestGetLanguages_NoContent(t *testing.T) {
 	setup()
 	defer teardown()
