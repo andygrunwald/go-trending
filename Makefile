@@ -3,10 +3,6 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL := test
 
-.PHONY: install
-install: ## Install dependencies
-	@go get ${gobuild_args} ./...
-
 .PHONY: clean
 clean: ## Clean up
 	@rm -fR ./cover*
