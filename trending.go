@@ -223,7 +223,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		// Collect contributor
 		var developer []Developer
 		contributerSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
-			devName, exists := devSelection.Attr("title")
+			devName, exists := devSelection.Attr("alt")
 			linkURL := t.appendBaseHostToPath(devName, exists)
 
 			avatar, exists := devSelection.Attr("src")
@@ -252,7 +252,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages(".col-md-3 div.select-menu .select-menu-list a")
+	return t.generateLanguages(".col-md-3 .select-menu .select-menu-list a.select-menu-item")
 }
 
 // GetTrendingLanguages will return a slice of Language that are currently trending.

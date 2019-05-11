@@ -100,29 +100,46 @@ func TestGetDevelopers_Today(t *testing.T) {
 		t.Errorf("GetDevelopers returned error: %v", err)
 	}
 
-	cloudsonURL, _ := url.Parse(server.URL + "/cloudson")
-	cloudsonAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/94096?v=3")
-	zeitURL, _ := url.Parse(server.URL + "/zeit")
-	zeitAvatar, _ := url.Parse("https://avatars3.githubusercontent.com/u/14985020?v=3")
-	want := []Developer{
-		{
-			ID:          94096,
-			DisplayName: "cloudson",
-			FullName:    "Claudson Oliveira",
-			URL:         cloudsonURL,
-			Avatar:      cloudsonAvatar,
-		},
-		{
-			ID:          14985020,
-			DisplayName: "zeit",
-			FullName:    "ZEIT",
-			URL:         zeitURL,
-			Avatar:      zeitAvatar,
-		},
+	n := len(developers)
+	if n == 0 {
+		t.Error("GetDevelopers returned no developers at all")
 	}
 
-	if !reflect.DeepEqual(developers, want) {
-		t.Errorf("GetDevelopers returned %+v, want %+v", developers, want)
+	if n != 25 {
+		t.Errorf("GetDevelopers returned %+v developers, expexted 25", n)
+	}
+}
+
+func TestGetDevelopers_TodayCorrectContent(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/trending/developers", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testFormValues(t, r, values{
+			"since": "daily",
+		})
+		website := getContentOfFile("./testdata/github.com_trending_developers.html")
+		fmt.Fprint(w, string(website))
+	})
+
+	developers, err := client.GetDevelopers(TimeToday, "")
+	if err != nil {
+		t.Errorf("GetDevelopers returned error: %v", err)
+	}
+
+	d := developers[0]
+	if d.ID == 0 {
+		t.Error("GetDevelopers returned no developer ID")
+	}
+	if len(d.DisplayName) == 0 {
+		t.Error("GetDevelopers returned no developer DisplayName")
+	}
+	if len(d.URL.String()) == 0 {
+		t.Error("GetDevelopers returned no developer URL")
+	}
+	if len(d.Avatar.String()) == 0 {
+		t.Error("GetDevelopers returned no developer avatar URL")
 	}
 }
 
@@ -164,24 +181,31 @@ func TestGetTrendingLanguages(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAll, _ := url.Parse("https://github.com/trending")
-	uUnknown, _ := url.Parse("https://github.com/trending/unknown")
-	uGo, _ := url.Parse("https://github.com/trending/go")
-	uJava, _ := url.Parse("https://github.com/trending/java")
-	uJavaScript, _ := url.Parse("https://github.com/trending/javascript")
-	uPHP, _ := url.Parse("https://github.com/trending/php")
-
-	want := []Language{
-		{"All languages", "", uAll},
-		{"Unknown languages", "unknown", uUnknown},
-		{"Go", "go", uGo},
-		{"Java", "java", uJava},
-		{"JavaScript", "javascript", uJavaScript},
-		{"PHP", "php", uPHP},
+	if len(languages) == 0 {
+		t.Error("GetLanguages returned no languages at all")
 	}
 
-	if !reflect.DeepEqual(languages, want) {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages, want)
+	// Might be dirty, but hey ...
+	// a) it works
+	// b) how high is the chance that All Languages + Unknown language change? ;)
+	allLanguages := languages[0]
+	if allLanguages.Name != "All languages" {
+		t.Errorf("GetLanguages returned %+v, want %+v", allLanguages.Name, "All languages")
+	}
+
+	allLanguagesURL := "https://github.com/trending?since=daily"
+	if allLanguages.URL.String() != allLanguagesURL {
+		t.Errorf("GetLanguages returned %+v, want %+v", allLanguages.URL.String(), allLanguagesURL)
+	}
+
+	unknownLanguages := languages[1]
+	if unknownLanguages.Name != "Unknown languages" {
+		t.Errorf("GetLanguages returned %+v, want %+v", unknownLanguages.Name, "Unknown languages")
+	}
+
+	unknownLanguagesURL := "https://github.com/trending/unknown?since=daily"
+	if unknownLanguages.URL.String() != unknownLanguagesURL {
+		t.Errorf("GetLanguages returned %+v, want %+v", unknownLanguages.URL.String(), unknownLanguagesURL)
 	}
 }
 
@@ -204,7 +228,7 @@ func TestGetTrendingLanguages_NoContent(t *testing.T) {
 	}
 }
 
-func TestGetLanguages(t *testing.T) {
+func TestGetLanguages_NumberOfLanguages(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -219,38 +243,32 @@ func TestGetLanguages(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAbap, _ := url.Parse("https://github.com/trending/abap")
-	uActionScript, _ := url.Parse("https://github.com/trending/actionscript")
-	uAda, _ := url.Parse("https://github.com/trending/ada")
-	uAgda, _ := url.Parse("https://github.com/trending/agda")
-	uAGS, _ := url.Parse("https://github.com/trending/ags-script")
-	uAlloy, _ := url.Parse("https://github.com/trending/alloy")
-	uAMPL, _ := url.Parse("https://github.com/trending/ampl")
-	uANTLR, _ := url.Parse("https://github.com/trending/antlr")
-
-	want := []Language{
-		{"ABAP", "abap", uAbap},
-		{"ActionScript", "actionscript", uActionScript},
-		{"Ada", "ada", uAda},
-		{"Agda", "agda", uAgda},
-		{"AGS Script", "ags-script", uAGS},
-		{"Alloy", "alloy", uAlloy},
-		{"AMPL", "ampl", uAMPL},
-		{"ANTLR", "antlr", uANTLR},
+	// https://github.com/trending has multiple dropdowns on the page
+	// one for the languages (mostly on the right side) and
+	// one for the timeframe (today, this week, ...)
+	// Here we check if we don't catch the timeframe one
+	if languages[0].Name == "today" {
+		t.Errorf("GetLanguages catches the timeframe dropdown on https://github.com/trending")
 	}
 
-	if !reflect.DeepEqual(languages, want) {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages, want)
+	// Lets simple count the number of language that we got
+	// Right now (2019-05-11) the https://github.com/trending
+	// has 503 languages. We might use a different number
+	// below to be save
+	n := len(languages)
+	nExpected := 450
+	if n == 0 || n < nExpected {
+		t.Errorf("GetLanguages returned to less languages (%+v), we expected more than %+v", n, nExpected)
 	}
 }
 
-func TestGetLanguages_RelativePaths(t *testing.T) {
+func TestGetLanguages_CorrectContent(t *testing.T) {
 	setup()
 	defer teardown()
 
 	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
-		website := getContentOfFile("./testdata/github.com_trending_relativepaths.html")
+		website := getContentOfFile("./testdata/github.com_trending.html")
 		fmt.Fprint(w, string(website))
 	})
 
@@ -259,28 +277,17 @@ func TestGetLanguages_RelativePaths(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
-	uAbap, _ := url.Parse("https://github.com/trending/abap")
-	uActionScript, _ := url.Parse("https://github.com/trending/actionscript")
-	uAda, _ := url.Parse("https://github.com/trending/ada")
-	uAgda, _ := url.Parse("https://github.com/trending/agda")
-	uAGS, _ := url.Parse("https://github.com/trending/ags-script")
-	uAlloy, _ := url.Parse("https://github.com/trending/alloy")
-	uAMPL, _ := url.Parse("https://github.com/trending/ampl")
-	uANTLR, _ := url.Parse("https://github.com/trending/antlr")
-
-	want := []Language{
-		{"ABAP", "abap", uAbap},
-		{"ActionScript", "actionscript", uActionScript},
-		{"Ada", "ada", uAda},
-		{"Agda", "agda", uAgda},
-		{"AGS Script", "ags-script", uAGS},
-		{"Alloy", "alloy", uAlloy},
-		{"AMPL", "ampl", uAMPL},
-		{"ANTLR", "antlr", uANTLR},
+	// Might be dirty, but hey ...
+	// a) it works
+	// b) how high is the chance that ABAP is not the 2nd language here?
+	abap := languages[1]
+	if abap.Name != "ABAP" {
+		t.Errorf("GetLanguages returned %+v, want %+v", abap.Name, "ABAP")
 	}
 
-	if !reflect.DeepEqual(languages, want) {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages, want)
+	abapURL := "https://github.com/trending/abap?since=daily"
+	if languages[1].URL.String() != abapURL {
+		t.Errorf("GetLanguages returned %+v, want %+v", languages[1].URL.String(), abapURL)
 	}
 }
 
@@ -344,69 +351,60 @@ func TestGetProjects(t *testing.T) {
 		t.Errorf("GetProjects returned error: %v", err)
 	}
 
-	// First Project
-	uGoTooling, _ := url.Parse(server.URL + "/campoy/go-tooling-workshop")
-	uGoToolingContributor, _ := url.Parse(server.URL + "/campoy/go-tooling-workshop/graphs/contributors")
-	campoyURL, _ := url.Parse(server.URL + "/campoy")
-	campoyAvatar, _ := url.Parse("https://avatars2.githubusercontent.com/u/2237452?v=3")
+	// Lets simple count the number of language that we got
+	// Right now (2019-05-11) the https://github.com/trending
+	// has 503 languages. We might use a different number
+	// below to be save
+	n := len(projects)
+	nExpected := 25
+	if n == 0 || n < nExpected {
+		t.Errorf("GetProjects returned to less projects (%+v), we expected %+v projects", n, nExpected)
+	}
+}
 
-	// Second Project
-	uDNSsearch, _ := url.Parse(server.URL + "/evilsocket/dnssearch")
-	uDNSsearchContributor, _ := url.Parse(server.URL + "/evilsocket/dnssearch/graphs/contributors")
-	evilsocketURL, _ := url.Parse(server.URL + "/evilsocket")
-	evilsocketAvatar, _ := url.Parse("https://avatars0.githubusercontent.com/u/86922?v=3")
-	infoslackURL, _ := url.Parse(server.URL + "/infoslack")
-	infoslackAvatar, _ := url.Parse("https://avatars1.githubusercontent.com/u/444911?v=3")
+func TestGetProjects_CorrectContent(t *testing.T) {
+	setup()
+	defer teardown()
 
-	want := []Project{
-		{
-			Name:           "campoy / go-tooling-workshop",
-			Owner:          "campoy",
-			RepositoryName: "go-tooling-workshop",
-			Description:    "A workshop covering all the tools gophers use in their day to day life",
-			Language:       "Go",
-			Stars:          553,
-			URL:            uGoTooling,
-			ContributorURL: uGoToolingContributor,
-			Contributor: []Developer{
-				{
-					ID:          2237452,
-					DisplayName: "campoy",
-					FullName:    "",
-					URL:         campoyURL,
-					Avatar:      campoyAvatar,
-				},
-			},
-		},
-		{
-			Name:           "evilsocket / dnssearch",
-			Owner:          "evilsocket",
-			RepositoryName: "dnssearch",
-			Description:    "A subdomain enumeration tool.",
-			Language:       "Go",
-			Stars:          120,
-			URL:            uDNSsearch,
-			ContributorURL: uDNSsearchContributor,
-			Contributor: []Developer{
-				{
-					ID:          86922,
-					DisplayName: "evilsocket",
-					FullName:    "",
-					URL:         evilsocketURL,
-					Avatar:      evilsocketAvatar,
-				},
-				{
-					ID:          444911,
-					DisplayName: "infoslack",
-					FullName:    "",
-					URL:         infoslackURL,
-					Avatar:      infoslackAvatar,
-				},
-			},
-		},
+	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testFormValues(t, r, values{
+			"since": "daily",
+			"l":     "go",
+		})
+		website := getContentOfFile("./testdata/github.com_trending.html")
+		fmt.Fprint(w, string(website))
+	})
+
+	projects, err := client.GetProjects(TimeToday, "go")
+	if err != nil {
+		t.Errorf("GetProjects returned error: %v", err)
 	}
 
-	if !reflect.DeepEqual(projects, want) {
-		t.Errorf("GetProjects returned %+v, want %+v", projects, want)
+	p := projects[0]
+	if len(p.Name) == 0 {
+		t.Error("GetProjects returns an empty project name.")
+	}
+	if len(p.Owner) == 0 {
+		t.Error("GetProjects returns an empty project owner.")
+	}
+	if len(p.RepositoryName) == 0 {
+		t.Error("GetProjects returns an empty repository name.")
+	}
+	if len(p.Language) == 0 {
+		t.Error("GetProjects returns an empty language.")
+	}
+	if p.Stars == 0 {
+		t.Error("GetProjects returns a trending project without starts.")
+	}
+	if len(p.URL.String()) == 0 {
+		t.Error("GetProjects returns an empty project URL.")
+	}
+	if len(p.ContributorURL.String()) == 0 {
+		t.Error("GetProjects returns an empty contributer URL.")
+	}
+
+	if len(p.Contributor[0].DisplayName) == 0 {
+		t.Error("GetProjects returns an empty contributor.")
 	}
 }
