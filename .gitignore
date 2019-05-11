@@ -22,3 +22,10 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# Coverage files
+cover*
+.vscode/
+
+# Build folder
+build/
