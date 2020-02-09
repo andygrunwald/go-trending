@@ -184,10 +184,11 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	}
 
 	// Query our information
-	doc.Find("ol.repo-list li").Each(func(i int, s *goquery.Selection) {
+	doc.Find(".Box-row").Each(func(i int, s *goquery.Selection) {
 
 		// Collect project information
-		name := t.getProjectName(s.Find("h3 a").Text())
+		name := t.getProjectName(s.Find(".h3.lh-condensed").Text())
+		// pp.Println("name: ", name)
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
 		splittedName := strings.SplitAfterN(name, "/", 2)
@@ -195,30 +196,42 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		owner = strings.TrimSpace(owner)
 		repositoryName := strings.TrimSpace(splittedName[1])
 
+		//pp.Println("owner: ", owner)
+		//pp.Println("repositoryName: ", repositoryName)		
+
 		address, exists := s.Find("h3 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
+		//pp.Println("exists: ", exists)
+		//pp.Println("address: ", address)
+		//pp.Println("projectURL: ", projectURL)
 
-		description := s.Find(".py-1 p").Text()
+		description := s.Find(".col-9.text-gray.my-1.pr-4").Text()
 		description = strings.TrimSpace(description)
+		// pp.Println("description: ", description)
 
-		language := s.Find("div.f6 span").Eq(0).Text()
+		language := s.Find(".d-inline-block.ml-0.mr-3").Eq(0).Text()
 		language = strings.TrimSpace(language)
 		if language == "Built by" {
 			language = ""
 		}
+		//pp.Println("language: ", language)
 
-		starsString := s.Find("div.f6 a").First().Text()
+		starsString := s.Find(".muted-link.d-inline-block.mr-3").First().Text()
 		starsString = strings.TrimSpace(starsString)
 		starsString = strings.Replace(starsString, ",", "", 1)
 		starsString = strings.Replace(starsString, ".", "", 1)
 		stars, err := strconv.Atoi(starsString)
+		// pp.Println("stars: ", stars)
 		if err != nil {
 			stars = 0
 		}
+		//pp.Println("stars: ", stars)
 
-		contributerSelection := s.Find("div.f6 a").Eq(2)
+		contributerSelection := s.Find(".d-inline-block.mr-3").Eq(2)
 		contributorPath, exists := contributerSelection.Attr("href")
 		contributorURL := t.appendBaseHostToPath(contributorPath, exists)
+		//pp.Println("contributorPath: ", contributorPath)
+		//pp.Println("contributorURL: ", contributorURL)
 
 		// Collect contributor
 		var developer []Developer
@@ -231,6 +244,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 
 			developer = append(developer, t.newDeveloper(devName, "", linkURL, avatarURL))
 		})
+		//pp.Println("developer: ", developer)
 
 		p := Project{
 			Name:           name,
@@ -243,6 +257,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			ContributorURL: contributorURL,
 			Contributor:    developer,
 		}
+		// pp.Println("project: ", p)
 		projects = append(projects, p)
 	})
 
@@ -252,14 +267,14 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages(".col-md-3 .select-menu .select-menu-list a.select-menu-item")
+	return t.generateLanguages("#languages-menuitems .select-menu-item-text")
 }
 
 // GetTrendingLanguages will return a slice of Language that are currently trending.
 // Trending languages are displayed at https://github.com/trending on the right side.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetTrendingLanguages() ([]Language, error) {
-	return t.generateLanguages("ul.filter-list a")
+	return t.generateLanguages("#languages-menuitems .select-menu-item-text")
 }
 
 // generateLanguages will retrieve the languages out of the github document.
@@ -267,6 +282,9 @@ func (t *Trending) GetTrendingLanguages() ([]Language, error) {
 // Other languages are hidden in a dropdown at this site
 func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 	var languages []Language
+
+// $("#languages-menuitems > .select-menu-item-text")
+
 
 	// Generate the URL to call
 	u, err := t.generateURL(modeLanguages, "", "")
@@ -307,6 +325,7 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 			URLName: languageURLName,
 			URL:     filterURL,
 		}
+		// pp.Println(language)
 		languages = append(languages, language)
 	})
 
@@ -343,22 +362,24 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	}
 
 	// Query information
-	doc.Find(".explore-content li").Each(func(i int, s *goquery.Selection) {
-		name := s.Find("h2 a").Text()
+	doc.Find(".Box-row.d-flex").Each(func(i int, s *goquery.Selection) {
+		name := s.Find(".h3.lh-condensed").Text()
 		name = strings.TrimSpace(name)
 		name = strings.Split(name, " ")[0]
 		name = strings.TrimSpace(name)
 
-		fullName := s.Find("h2 a span").Text()
+		fullName := s.Find(".h3.lh-condensed").First().Text()
 		fullName = t.trimBraces(fullName)
 
-		linkHref, exists := s.Find("h2 a").Attr("href")
+		linkHref, exists := s.Find(".link-gray").Attr("href")
 		linkURL := t.appendBaseHostToPath(linkHref, exists)
 
 		avatar, exists := s.Find("a img").Attr("src")
 		avatarURL := t.buildAvatarURL(avatar, exists)
 
-		developers = append(developers, t.newDeveloper(name, fullName, linkURL, avatarURL))
+		developer := t.newDeveloper(name, fullName, linkURL, avatarURL)
+		// pp.Println(developer)
+		developers = append(developers, developer)
 	})
 
 	return developers, nil
