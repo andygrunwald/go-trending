@@ -199,7 +199,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		//pp.Println("owner: ", owner)
 		//pp.Println("repositoryName: ", repositoryName)		
 
-		address, exists := s.Find("h3 a").First().Attr("href")
+		address, exists := s.Find(".h3.lh-condensed > a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
 		//pp.Println("exists: ", exists)
 		//pp.Println("address: ", address)
@@ -221,21 +221,18 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		starsString = strings.Replace(starsString, ",", "", 1)
 		starsString = strings.Replace(starsString, ".", "", 1)
 		stars, err := strconv.Atoi(starsString)
-		// pp.Println("stars: ", stars)
 		if err != nil {
 			stars = 0
 		}
-		//pp.Println("stars: ", stars)
 
 		contributerSelection := s.Find(".d-inline-block.mr-3").Eq(2)
 		contributorPath, exists := contributerSelection.Attr("href")
 		contributorURL := t.appendBaseHostToPath(contributorPath, exists)
-		//pp.Println("contributorPath: ", contributorPath)
-		//pp.Println("contributorURL: ", contributorURL)
+		contributerSection := s.Find(".d-inline-block.mr-3")
 
 		// Collect contributor
 		var developer []Developer
-		contributerSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
+		contributerSection.Find("img.avatar.mb-1").Each(func(j int, devSelection *goquery.Selection) {
 			devName, exists := devSelection.Attr("alt")
 			linkURL := t.appendBaseHostToPath(devName, exists)
 
@@ -244,7 +241,6 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 
 			developer = append(developer, t.newDeveloper(devName, "", linkURL, avatarURL))
 		})
-		//pp.Println("developer: ", developer)
 
 		p := Project{
 			Name:           name,
@@ -257,7 +253,6 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			ContributorURL: contributorURL,
 			Contributor:    developer,
 		}
-		// pp.Println("project: ", p)
 		projects = append(projects, p)
 	})
 
@@ -267,14 +262,14 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages("#languages-menuitems .select-menu-item-text")
+	return t.generateLanguages("#languages-menuitems .select-menu-item")
 }
 
 // GetTrendingLanguages will return a slice of Language that are currently trending.
 // Trending languages are displayed at https://github.com/trending on the right side.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetTrendingLanguages() ([]Language, error) {
-	return t.generateLanguages("#languages-menuitems .select-menu-item-text")
+	return t.generateLanguages("#languages-menuitems .select-menu-item")
 }
 
 // generateLanguages will retrieve the languages out of the github document.
@@ -381,19 +376,21 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 		// pp.Println(developer)
 		developers = append(developers, developer)
 	})
-
+	// pp.Println("GetDevelopers.developers: ",developers)
 	return developers, nil
 }
 
 // newDeveloper is a utility function to create a new Developer
 func (t *Trending) newDeveloper(name, fullName string, linkURL, avatarURL *url.URL) Developer {
-	return Developer{
+	d := Developer{
 		ID:          t.getUserIDBasedOnAvatarURL(avatarURL),
 		DisplayName: name,
 		FullName:    fullName,
 		URL:         linkURL,
 		Avatar:      avatarURL,
 	}
+	// pp.Println("Developer: ", d)
+	return d
 }
 
 // trimBraces will remove braces "(" & ")" from the string
