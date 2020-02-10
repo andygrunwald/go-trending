@@ -29,3 +29,4 @@ cover*
 
 # Build folder
 build/
+cmd/
