@@ -22,7 +22,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       # Caching go modules to speed up the run
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3.0.1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -47,7 +47,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       # Caching go modules to speed up the run
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3.0.1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -71,7 +71,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       # Caching go modules to speed up the run
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3.0.1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -99,7 +99,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       # Caching go modules to speed up the run
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3.0.1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
