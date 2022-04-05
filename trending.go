@@ -385,7 +385,7 @@ func (t *Trending) trimBraces(text string) string {
 
 // buildAvatarURL will build a url.URL out of the Avatar URL provided by Github
 func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
-	if exists == false {
+	if !exists {
 		return nil
 	}
 
@@ -421,7 +421,7 @@ func (t *Trending) getUserIDBasedOnAvatarURL(avatarURL *url.URL) int {
 //
 // A urlStr like "/trending" will be returned as https://github.com/trending
 func (t *Trending) appendBaseHostToPath(urlStr string, exists bool) *url.URL {
-	if exists == false {
+	if !exists {
 		return nil
 	}
 
