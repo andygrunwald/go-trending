@@ -297,7 +297,7 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 
 		filterURL, _ := url.Parse(languageAddress)
 
-		re := regexp.MustCompile("github.com/trending/([^/\\?]*)")
+		re := regexp.MustCompile(`github.com/trending/([^/\\?]*)`)
 		if matches := re.FindStringSubmatch(languageAddress); len(matches) >= 2 && len(matches[1]) > 0 {
 			languageURLName = matches[1]
 		}
