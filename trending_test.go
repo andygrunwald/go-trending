@@ -77,7 +77,7 @@ func TestNewTrending(t *testing.T) {
 		t.Error("Trending client is nil. Expected trending.Trending structure")
 	}
 
-	if c.BaseURL == nil {
+	if c != nil && c.BaseURL == nil {
 		t.Error("Trending BaseURL is nil. Expected a URL")
 	}
 }

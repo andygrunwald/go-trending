@@ -178,10 +178,11 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		return projects, err
 	}
 
-	doc, err := goquery.NewDocumentFromResponse(res)
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return projects, err
 	}
+	defer res.Body.Close()
 
 	// Query our information
 	doc.Find("ol.repo-list li").Each(func(i int, s *goquery.Selection) {
@@ -280,10 +281,11 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 		return languages, err
 	}
 
-	doc, err := goquery.NewDocumentFromResponse(res)
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return languages, err
 	}
+	defer res.Body.Close()
 
 	// Query our information
 	doc.Find(mainSelector).Each(func(i int, s *goquery.Selection) {
@@ -297,7 +299,7 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 
 		filterURL, _ := url.Parse(languageAddress)
 
-		re := regexp.MustCompile("github.com/trending/([^/\\?]*)")
+		re := regexp.MustCompile(`github.com/trending/([^/\\?]*)`)
 		if matches := re.FindStringSubmatch(languageAddress); len(matches) >= 2 && len(matches[1]) > 0 {
 			languageURLName = matches[1]
 		}
@@ -337,10 +339,11 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 		return developers, err
 	}
 
-	doc, err := goquery.NewDocumentFromResponse(res)
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return developers, err
 	}
+	defer res.Body.Close()
 
 	// Query information
 	doc.Find(".explore-content li").Each(func(i int, s *goquery.Selection) {
@@ -385,7 +388,7 @@ func (t *Trending) trimBraces(text string) string {
 
 // buildAvatarURL will build a url.URL out of the Avatar URL provided by Github
 func (t *Trending) buildAvatarURL(avatar string, exists bool) *url.URL {
-	if exists == false {
+	if !exists {
 		return nil
 	}
 
@@ -421,7 +424,7 @@ func (t *Trending) getUserIDBasedOnAvatarURL(avatarURL *url.URL) int {
 //
 // A urlStr like "/trending" will be returned as https://github.com/trending
 func (t *Trending) appendBaseHostToPath(urlStr string, exists bool) *url.URL {
-	if exists == false {
+	if !exists {
 		return nil
 	}
 
