@@ -178,10 +178,11 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		return projects, err
 	}
 
-	doc, err := goquery.NewDocumentFromResponse(res)
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return projects, err
 	}
+	defer res.Body.Close()
 
 	// Query our information
 	doc.Find("ol.repo-list li").Each(func(i int, s *goquery.Selection) {
@@ -280,10 +281,11 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 		return languages, err
 	}
 
-	doc, err := goquery.NewDocumentFromResponse(res)
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return languages, err
 	}
+	defer res.Body.Close()
 
 	// Query our information
 	doc.Find(mainSelector).Each(func(i int, s *goquery.Selection) {
@@ -337,10 +339,11 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 		return developers, err
 	}
 
-	doc, err := goquery.NewDocumentFromResponse(res)
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return developers, err
 	}
+	defer res.Body.Close()
 
 	// Query information
 	doc.Find(".explore-content li").Each(func(i int, s *goquery.Selection) {
