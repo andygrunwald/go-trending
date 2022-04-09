@@ -19,17 +19,32 @@ func ExampleTrending_GetProjects() {
 		log.Fatal(err)
 	}
 
-	onlyGoProjects := true
+	projectsNotInGo := 0
 	for _, project := range projects {
 		if len(project.Language) > 0 && project.Language != "Go" {
+			projectsNotInGo = projectsNotInGo + 1
+		}
+	}
+
+	// Sometimes we get projects where the main language is
+	// not Go, but the repository contains a large amount of Go code.
+	// Like https://github.com/codeedu/imersao-7-codepix
+	// Main language TypeScript + 36% Go.
+	// In this case, we calculate a threshold to tackle this situation, because
+	// our code works as expected and GitHub is also returning projects with Go code.
+	// But it might not be the (only) main language.
+	onlyGoProjects := true
+	if projectsNotInGo > 0 {
+		// Threshold 10%
+		if (projectsNotInGo / len(projects) * 100) > 10 {
 			onlyGoProjects = false
 		}
 	}
 
-	if len(projects) > 0 && onlyGoProjects == true {
+	if len(projects) > 0 && onlyGoProjects {
 		fmt.Println("Projects (filtered by Go) received.")
 	} else {
-		fmt.Printf("Number of projectes received: %d (filtered by golang %v)", len(projects), onlyGoProjects)
+		fmt.Printf("Number of projectes received: %d / projects with a different main language than golang %d)", len(projects), projectsNotInGo)
 	}
 
 	// Output: Projects (filtered by Go) received.
