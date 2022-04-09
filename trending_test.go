@@ -106,8 +106,8 @@ func TestGetDevelopers_Today(t *testing.T) {
 		t.Error("GetDevelopers returned no developers at all")
 	}
 
-	if n <= 25 {
-		t.Errorf("GetDevelopers returned %+v developers, expected > 25", n)
+	if n < 25 {
+		t.Errorf("GetDevelopers returned %+v developers, expected 25", n)
 	}
 }
 
@@ -129,18 +129,23 @@ func TestGetDevelopers_TodayCorrectContent(t *testing.T) {
 		t.Errorf("GetDevelopers returned error: %v", err)
 	}
 
-	d := developers[0]
-	if d.ID == 0 {
-		t.Error("GetDevelopers returned no developer ID")
+	devsToTest := []Developer{
+		developers[0],
+		developers[1],
 	}
-	if len(d.DisplayName) == 0 {
-		t.Error("GetDevelopers returned no developer DisplayName")
-	}
-	if len(d.URL.String()) == 0 {
-		t.Error("GetDevelopers returned no developer URL")
-	}
-	if len(d.Avatar.String()) == 0 {
-		t.Error("GetDevelopers returned no developer avatar URL")
+	for _, d := range devsToTest {
+		if d.ID == 0 {
+			t.Error("GetDevelopers returned no developer ID")
+		}
+		if len(d.DisplayName) == 0 {
+			t.Error("GetDevelopers returned no developer DisplayName")
+		}
+		if d.URL == nil || len(d.URL.String()) == 0 {
+			t.Error("GetDevelopers returned no developer URL")
+		}
+		if d.Avatar == nil || len(d.Avatar.String()) == 0 {
+			t.Error("GetDevelopers returned no developer avatar URL")
+		}
 	}
 }
 

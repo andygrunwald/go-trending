@@ -339,7 +339,7 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	defer res.Body.Close()
 
 	// Query information
-	doc.Find("main .Box div article").Each(func(i int, s *goquery.Selection) {
+	doc.Find("main .Box div article[id^=\"pa-\"]").Each(func(i int, s *goquery.Selection) {
 		name := s.Find("h1.h3 a").Text()
 		name = strings.TrimSpace(name)
 		name = strings.Split(name, " ")[0]
