@@ -166,68 +166,6 @@ func TestGetDevelopers_NoContent(t *testing.T) {
 	}
 }
 
-func TestGetTrendingLanguages(t *testing.T) {
-	setup()
-	defer teardown()
-
-	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-		website := getContentOfFile("./testdata/github.com_trending.html")
-		fmt.Fprint(w, string(website))
-	})
-
-	languages, err := client.GetTrendingLanguages()
-	if err != nil {
-		t.Errorf("GetLanguages returned error: %v", err)
-	}
-
-	if len(languages) == 0 {
-		t.Error("GetLanguages returned no languages at all")
-	}
-
-	// Might be dirty, but hey ...
-	// a) it works
-	// b) how high is the chance that All Languages + Unknown language change? ;)
-	allLanguages := languages[0]
-	if allLanguages.Name != "All languages" {
-		t.Errorf("GetLanguages returned %+v, want %+v", allLanguages.Name, "All languages")
-	}
-
-	allLanguagesURL := "https://github.com/trending?since=daily"
-	if allLanguages.URL.String() != allLanguagesURL {
-		t.Errorf("GetLanguages returned %+v, want %+v", allLanguages.URL.String(), allLanguagesURL)
-	}
-
-	unknownLanguages := languages[1]
-	if unknownLanguages.Name != "Unknown languages" {
-		t.Errorf("GetLanguages returned %+v, want %+v", unknownLanguages.Name, "Unknown languages")
-	}
-
-	unknownLanguagesURL := "https://github.com/trending/unknown?since=daily"
-	if unknownLanguages.URL.String() != unknownLanguagesURL {
-		t.Errorf("GetLanguages returned %+v, want %+v", unknownLanguages.URL.String(), unknownLanguagesURL)
-	}
-}
-
-func TestGetTrendingLanguages_NoContent(t *testing.T) {
-	setup()
-	defer teardown()
-
-	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-	})
-
-	languages, err := client.GetTrendingLanguages()
-	if err != nil {
-		t.Errorf("GetLanguages returned error: %v", err)
-	}
-
-	var want []Language
-	if !reflect.DeepEqual(languages, want) {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages, want)
-	}
-}
-
 func TestGetLanguages_NumberOfLanguages(t *testing.T) {
 	setup()
 	defer teardown()

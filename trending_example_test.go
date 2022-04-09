@@ -73,22 +73,3 @@ func ExampleTrending_GetDevelopers() {
 
 	// Output: Developers received.
 }
-
-func ExampleTrending_GetTrendingLanguages() {
-	client := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-	trend := trending.NewTrendingWithClient(client)
-	languages, err := trend.GetTrendingLanguages()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if len(languages) > 0 {
-		fmt.Println("Trending Languages received.")
-	} else {
-		fmt.Printf("Number of languages received: %d", len(languages))
-	}
-
-	// Output: Trending Languages received.
-}
