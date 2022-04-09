@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -351,5 +352,29 @@ func TestGetProjects_CorrectContent(t *testing.T) {
 
 	if len(p.Contributor[0].DisplayName) == 0 {
 		t.Error("GetProjects returns an empty contributor.")
+	}
+}
+
+func TestGetProjects_WithoutWhitespaceInName(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testFormValues(t, r, values{
+			"since": "daily",
+		})
+		website := getContentOfFile("./testdata/github.com_trending.html")
+		fmt.Fprint(w, string(website))
+	})
+
+	projects, err := client.GetProjects(TimeToday, "")
+	if err != nil {
+		t.Errorf("GetProjects returned error: %v", err)
+	}
+
+	p := projects[0]
+	if strings.Contains(p.Name, " ") {
+		t.Errorf("Project name %s contains whitespace, expected no whitespace in project name.", p.Name)
 	}
 }

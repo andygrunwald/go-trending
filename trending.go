@@ -1,6 +1,7 @@
 package trending
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -194,6 +195,9 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		owner := splittedName[0][:len(splittedName[0])-1]
 		owner = strings.TrimSpace(owner)
 		repositoryName := strings.TrimSpace(splittedName[1])
+
+		// Overwrite name to be 100% sure it contains no space between owner and repo name
+		name = fmt.Sprintf("%s/%s", owner, repositoryName)
 
 		address, exists := s.Find("h1 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
