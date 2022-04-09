@@ -346,7 +346,7 @@ func TestGetProjects_CorrectContent(t *testing.T) {
 		t.Error("GetProjects returns an empty project URL.")
 	}
 	if len(p.ContributorURL.String()) == 0 {
-		t.Error("GetProjects returns an empty contributer URL.")
+		t.Error("GetProjects returns an empty contributor URL.")
 	}
 
 	if len(p.Contributor[0].DisplayName) == 0 {

@@ -213,13 +213,13 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			stars = 0
 		}
 
-		contributerSelection := s.Find("div.f6 a").Eq(2)
-		contributorPath, exists := contributerSelection.Attr("href")
+		contributorSelection := s.Find("div.f6 a").Eq(2)
+		contributorPath, exists := contributorSelection.Attr("href")
 		contributorURL := t.appendBaseHostToPath(contributorPath, exists)
 
 		// Collect contributor
 		var developer []Developer
-		contributerSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
+		contributorSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
 			devName, exists := devSelection.Attr("alt")
 			linkURL := t.appendBaseHostToPath(devName, exists)
 
