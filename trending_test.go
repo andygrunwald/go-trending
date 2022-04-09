@@ -91,8 +91,8 @@ func TestGetDevelopers_Today(t *testing.T) {
 		testFormValues(t, r, values{
 			"since": "daily",
 		})
-		website := getContentOfFile("./testdata/github.com_trending_developers.html")
-		fmt.Fprint(w, string(website))
+		c := getContentOfFile("./testdata/github.com_trending_developers.html")
+		fmt.Fprint(w, string(c))
 	})
 
 	developers, err := client.GetDevelopers(TimeToday, "")
@@ -105,8 +105,8 @@ func TestGetDevelopers_Today(t *testing.T) {
 		t.Error("GetDevelopers returned no developers at all")
 	}
 
-	if n != 25 {
-		t.Errorf("GetDevelopers returned %+v developers, expexted 25", n)
+	if n <= 25 {
+		t.Errorf("GetDevelopers returned %+v developers, expected > 25", n)
 	}
 }
 
@@ -166,68 +166,6 @@ func TestGetDevelopers_NoContent(t *testing.T) {
 	}
 }
 
-func TestGetTrendingLanguages(t *testing.T) {
-	setup()
-	defer teardown()
-
-	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-		website := getContentOfFile("./testdata/github.com_trending.html")
-		fmt.Fprint(w, string(website))
-	})
-
-	languages, err := client.GetTrendingLanguages()
-	if err != nil {
-		t.Errorf("GetLanguages returned error: %v", err)
-	}
-
-	if len(languages) == 0 {
-		t.Error("GetLanguages returned no languages at all")
-	}
-
-	// Might be dirty, but hey ...
-	// a) it works
-	// b) how high is the chance that All Languages + Unknown language change? ;)
-	allLanguages := languages[0]
-	if allLanguages.Name != "All languages" {
-		t.Errorf("GetLanguages returned %+v, want %+v", allLanguages.Name, "All languages")
-	}
-
-	allLanguagesURL := "https://github.com/trending?since=daily"
-	if allLanguages.URL.String() != allLanguagesURL {
-		t.Errorf("GetLanguages returned %+v, want %+v", allLanguages.URL.String(), allLanguagesURL)
-	}
-
-	unknownLanguages := languages[1]
-	if unknownLanguages.Name != "Unknown languages" {
-		t.Errorf("GetLanguages returned %+v, want %+v", unknownLanguages.Name, "Unknown languages")
-	}
-
-	unknownLanguagesURL := "https://github.com/trending/unknown?since=daily"
-	if unknownLanguages.URL.String() != unknownLanguagesURL {
-		t.Errorf("GetLanguages returned %+v, want %+v", unknownLanguages.URL.String(), unknownLanguagesURL)
-	}
-}
-
-func TestGetTrendingLanguages_NoContent(t *testing.T) {
-	setup()
-	defer teardown()
-
-	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-	})
-
-	languages, err := client.GetTrendingLanguages()
-	if err != nil {
-		t.Errorf("GetLanguages returned error: %v", err)
-	}
-
-	var want []Language
-	if !reflect.DeepEqual(languages, want) {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages, want)
-	}
-}
-
 func TestGetLanguages_NumberOfLanguages(t *testing.T) {
 	setup()
 	defer teardown()
@@ -277,17 +215,24 @@ func TestGetLanguages_CorrectContent(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
+	// Today (2022-04-09), we have 637 languages
+	// 500 is a random number, that (i assume) will not drop that fast.
+	if len(languages) <= 500 {
+		t.Errorf("GetLanguages returned %+v languages, expected > 500", len(languages))
+	}
 	// Might be dirty, but hey ...
 	// a) it works
-	// b) how high is the chance that ABAP is not the 2nd language here?
-	abap := languages[1]
-	if abap.Name != "ABAP" {
-		t.Errorf("GetLanguages returned %+v, want %+v", abap.Name, "ABAP")
+	// b) how high is the chance that HTML is not the 2nd language here?
+	// -> Very high :D (until the next testdata update)
+	secondLanguage := languages[1]
+	expectedLanguage := "HTML"
+	if secondLanguage.Name != expectedLanguage {
+		t.Errorf("GetLanguages returned %+v, want %+v", secondLanguage.Name, expectedLanguage)
 	}
 
-	abapURL := "https://github.com/trending/abap?since=daily"
-	if languages[1].URL.String() != abapURL {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages[1].URL.String(), abapURL)
+	secondLanguageURL := "https://github.com/trending/html?since=daily"
+	if languages[1].URL.String() != secondLanguageURL {
+		t.Errorf("GetLanguages returned %+v, want %+v", languages[1].URL.String(), secondLanguageURL)
 	}
 }
 
@@ -395,7 +340,7 @@ func TestGetProjects_CorrectContent(t *testing.T) {
 		t.Error("GetProjects returns an empty language.")
 	}
 	if p.Stars == 0 {
-		t.Error("GetProjects returns a trending project without starts.")
+		t.Error("GetProjects returns a trending project without stars.")
 	}
 	if len(p.URL.String()) == 0 {
 		t.Error("GetProjects returns an empty project URL.")

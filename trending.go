@@ -185,10 +185,9 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	defer res.Body.Close()
 
 	// Query our information
-	doc.Find("ol.repo-list li").Each(func(i int, s *goquery.Selection) {
-
+	doc.Find(".Box article.Box-row").Each(func(i int, s *goquery.Selection) {
 		// Collect project information
-		name := t.getProjectName(s.Find("h3 a").Text())
+		name := t.getProjectName(s.Find("h1 a").Text())
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
 		splittedName := strings.SplitAfterN(name, "/", 2)
@@ -196,22 +195,19 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		owner = strings.TrimSpace(owner)
 		repositoryName := strings.TrimSpace(splittedName[1])
 
-		address, exists := s.Find("h3 a").First().Attr("href")
+		address, exists := s.Find("h1 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
 
-		description := s.Find(".py-1 p").Text()
+		description := s.Find("p").Text()
 		description = strings.TrimSpace(description)
 
-		language := s.Find("div.f6 span").Eq(0).Text()
+		language := s.Find("span[itemprop=programmingLanguage]").Eq(0).Text()
 		language = strings.TrimSpace(language)
-		if language == "Built by" {
-			language = ""
-		}
 
-		starsString := s.Find("div.f6 a").First().Text()
+		starsString := s.Find("div a[href$=\"/stargazers\"]").Text()
 		starsString = strings.TrimSpace(starsString)
+		// Replace english thousand separator ","
 		starsString = strings.Replace(starsString, ",", "", 1)
-		starsString = strings.Replace(starsString, ".", "", 1)
 		stars, err := strconv.Atoi(starsString)
 		if err != nil {
 			stars = 0
@@ -253,14 +249,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages(".col-md-3 .select-menu .select-menu-list a.select-menu-item")
-}
-
-// GetTrendingLanguages will return a slice of Language that are currently trending.
-// Trending languages are displayed at https://github.com/trending on the right side.
-// With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
-func (t *Trending) GetTrendingLanguages() ([]Language, error) {
-	return t.generateLanguages("ul.filter-list a")
+	return t.generateLanguages("#languages-menuitems a.select-menu-item")
 }
 
 // generateLanguages will retrieve the languages out of the github document.
@@ -346,19 +335,19 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	defer res.Body.Close()
 
 	// Query information
-	doc.Find(".explore-content li").Each(func(i int, s *goquery.Selection) {
-		name := s.Find("h2 a").Text()
+	doc.Find("main .Box div article").Each(func(i int, s *goquery.Selection) {
+		name := s.Find("h1.h3 a").Text()
 		name = strings.TrimSpace(name)
 		name = strings.Split(name, " ")[0]
 		name = strings.TrimSpace(name)
 
-		fullName := s.Find("h2 a span").Text()
+		fullName := s.Find("p.f4 a").Text()
 		fullName = t.trimBraces(fullName)
 
-		linkHref, exists := s.Find("h2 a").Attr("href")
+		linkHref, exists := s.Find("h1.h3 a").Attr("href")
 		linkURL := t.appendBaseHostToPath(linkHref, exists)
 
-		avatar, exists := s.Find("a img").Attr("src")
+		avatar, exists := s.Find("img.avatar-user").Attr("src")
 		avatarURL := t.buildAvatarURL(avatar, exists)
 
 		developers = append(developers, t.newDeveloper(name, fullName, linkURL, avatarURL))
