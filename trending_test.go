@@ -215,17 +215,24 @@ func TestGetLanguages_CorrectContent(t *testing.T) {
 		t.Errorf("GetLanguages returned error: %v", err)
 	}
 
+	// Today (2022-04-09), we have 637 languages
+	// 500 is a random number, that (i assume) will not drop that fast.
+	if len(languages) <= 500 {
+		t.Errorf("GetLanguages returned %+v languages, expected > 500", len(languages))
+	}
 	// Might be dirty, but hey ...
 	// a) it works
-	// b) how high is the chance that ABAP is not the 2nd language here?
-	abap := languages[1]
-	if abap.Name != "ABAP" {
-		t.Errorf("GetLanguages returned %+v, want %+v", abap.Name, "ABAP")
+	// b) how high is the chance that HTML is not the 2nd language here?
+	// -> Very high :D (until the next testdata update)
+	secondLanguage := languages[1]
+	expectedLanguage := "HTML"
+	if secondLanguage.Name != expectedLanguage {
+		t.Errorf("GetLanguages returned %+v, want %+v", secondLanguage.Name, expectedLanguage)
 	}
 
-	abapURL := "https://github.com/trending/abap?since=daily"
-	if languages[1].URL.String() != abapURL {
-		t.Errorf("GetLanguages returned %+v, want %+v", languages[1].URL.String(), abapURL)
+	secondLanguageURL := "https://github.com/trending/html?since=daily"
+	if languages[1].URL.String() != secondLanguageURL {
+		t.Errorf("GetLanguages returned %+v, want %+v", languages[1].URL.String(), secondLanguageURL)
 	}
 }
 

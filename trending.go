@@ -253,7 +253,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 // GetLanguages will return a slice of Language known by gitub.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
-	return t.generateLanguages("#languages-menuitems div a.select-menu-item")
+	return t.generateLanguages("#languages-menuitems a.select-menu-item")
 }
 
 // generateLanguages will retrieve the languages out of the github document.
