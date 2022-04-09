@@ -1,6 +1,7 @@
 package trending
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -185,10 +186,10 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	defer res.Body.Close()
 
 	// Query our information
-	doc.Find("ol.repo-list li").Each(func(i int, s *goquery.Selection) {
+	doc.Find(".Box article.Box-row").Each(func(i int, s *goquery.Selection) {
 
 		// Collect project information
-		name := t.getProjectName(s.Find("h3 a").Text())
+		name := t.getProjectName(s.Find("h1 a").Text())
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
 		splittedName := strings.SplitAfterN(name, "/", 2)
@@ -196,22 +197,18 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		owner = strings.TrimSpace(owner)
 		repositoryName := strings.TrimSpace(splittedName[1])
 
-		address, exists := s.Find("h3 a").First().Attr("href")
+		address, exists := s.Find("h1 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
 
-		description := s.Find(".py-1 p").Text()
+		description := s.Find("p").Text()
 		description = strings.TrimSpace(description)
 
-		language := s.Find("div.f6 span").Eq(0).Text()
+		language := s.Find("span[itemprop=programmingLanguage]").Eq(0).Text()
 		language = strings.TrimSpace(language)
-		if language == "Built by" {
-			language = ""
-		}
 
-		starsString := s.Find("div.f6 a").First().Text()
-		starsString = strings.TrimSpace(starsString)
-		starsString = strings.Replace(starsString, ",", "", 1)
-		starsString = strings.Replace(starsString, ".", "", 1)
+		stargazerURL := fmt.Sprintf("%s/stargazers", address)
+		starSelector := fmt.Sprintf("a[href=%s]", stargazerURL)
+		starsString := s.Find(starSelector).Text()
 		stars, err := strconv.Atoi(starsString)
 		if err != nil {
 			stars = 0
