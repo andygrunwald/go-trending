@@ -91,8 +91,8 @@ func TestGetDevelopers_Today(t *testing.T) {
 		testFormValues(t, r, values{
 			"since": "daily",
 		})
-		website := getContentOfFile("./testdata/github.com_trending_developers.html")
-		fmt.Fprint(w, string(website))
+		c := getContentOfFile("./testdata/github.com_trending_developers.html")
+		fmt.Fprint(w, string(c))
 	})
 
 	developers, err := client.GetDevelopers(TimeToday, "")
@@ -105,8 +105,8 @@ func TestGetDevelopers_Today(t *testing.T) {
 		t.Error("GetDevelopers returned no developers at all")
 	}
 
-	if n != 25 {
-		t.Errorf("GetDevelopers returned %+v developers, expexted 25", n)
+	if n <= 25 {
+		t.Errorf("GetDevelopers returned %+v developers, expected > 25", n)
 	}
 }
 

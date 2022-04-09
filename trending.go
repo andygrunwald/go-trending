@@ -339,19 +339,19 @@ func (t *Trending) GetDevelopers(time, language string) ([]Developer, error) {
 	defer res.Body.Close()
 
 	// Query information
-	doc.Find(".explore-content li").Each(func(i int, s *goquery.Selection) {
-		name := s.Find("h2 a").Text()
+	doc.Find("main .Box div article").Each(func(i int, s *goquery.Selection) {
+		name := s.Find("h1.h3 a").Text()
 		name = strings.TrimSpace(name)
 		name = strings.Split(name, " ")[0]
 		name = strings.TrimSpace(name)
 
-		fullName := s.Find("h2 a span").Text()
+		fullName := s.Find("p.f4 a").Text()
 		fullName = t.trimBraces(fullName)
 
-		linkHref, exists := s.Find("h2 a").Attr("href")
+		linkHref, exists := s.Find("h1.h3 a").Attr("href")
 		linkURL := t.appendBaseHostToPath(linkHref, exists)
 
-		avatar, exists := s.Find("a img").Attr("src")
+		avatar, exists := s.Find("img.avatar-user").Attr("src")
 		avatarURL := t.buildAvatarURL(avatar, exists)
 
 		developers = append(developers, t.newDeveloper(name, fullName, linkURL, avatarURL))
