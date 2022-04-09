@@ -1,7 +1,6 @@
 package trending
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -187,7 +186,6 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 
 	// Query our information
 	doc.Find(".Box article.Box-row").Each(func(i int, s *goquery.Selection) {
-
 		// Collect project information
 		name := t.getProjectName(s.Find("h1 a").Text())
 
@@ -206,9 +204,10 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		language := s.Find("span[itemprop=programmingLanguage]").Eq(0).Text()
 		language = strings.TrimSpace(language)
 
-		stargazerURL := fmt.Sprintf("%s/stargazers", address)
-		starSelector := fmt.Sprintf("a[href=%s]", stargazerURL)
-		starsString := s.Find(starSelector).Text()
+		starsString := s.Find("div a[href$=\"/stargazers\"]").Text()
+		starsString = strings.TrimSpace(starsString)
+		// Replace english thousand separator ","
+		starsString = strings.Replace(starsString, ",", "", 1)
 		stars, err := strconv.Atoi(starsString)
 		if err != nil {
 			stars = 0

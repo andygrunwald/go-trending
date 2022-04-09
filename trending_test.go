@@ -340,7 +340,7 @@ func TestGetProjects_CorrectContent(t *testing.T) {
 		t.Error("GetProjects returns an empty language.")
 	}
 	if p.Stars == 0 {
-		t.Error("GetProjects returns a trending project without starts.")
+		t.Error("GetProjects returns a trending project without stars.")
 	}
 	if len(p.URL.String()) == 0 {
 		t.Error("GetProjects returns an empty project URL.")
