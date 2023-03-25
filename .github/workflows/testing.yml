@@ -10,24 +10,16 @@ on:
 jobs:
   gofmt:
     name: go fmt (Go ${{ matrix.go }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.20', '1.19' ]
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
-
-      # Caching go modules to speed up the run
-      - uses: actions/cache@v3.3.1
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Run go fmt
         if: runner.os != 'Windows'
@@ -35,48 +27,32 @@ jobs:
 
   govet:
     name: go vet (Go ${{ matrix.go }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.20', '1.19' ]
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
-
-      # Caching go modules to speed up the run
-      - uses: actions/cache@v3.3.1
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Run go vet
         run: make vet
 
   staticcheck:
     name: staticcheck (Go ${{ matrix.go }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.20', '1.19' ]
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
-
-      # Caching go modules to speed up the run
-      - uses: actions/cache@v3.3.1
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1.3.0
@@ -87,24 +63,16 @@ jobs:
 
   unittesting:
     name: unit testing (Go ${{ matrix.go }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.20', '1.19' ]
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
-
-      # Caching go modules to speed up the run
-      - uses: actions/cache@v3.3.1
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Run Unit tests.
         run: make test
