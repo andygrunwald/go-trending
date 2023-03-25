@@ -11,7 +11,7 @@ For example:
 	// Get trending projects of language "go" for today.
 	projects, err := trend.GetProjects(trending.TimeToday, "go")
 
-GitHub Enterprise
+# GitHub Enterprise
 
 If you are running a GitHub Enterprise yourself you can use this library as well.
 For such cases you can change the BaseURL of the library:
@@ -22,6 +22,5 @@ For such cases you can change the BaseURL of the library:
 
 	// Get trending projects of language "go" for today.
 	projects, err := trend.GetProjects(trending.TimeToday, "go")
-
 */
 package trending

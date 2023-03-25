@@ -41,17 +41,16 @@ const (
 // It doesn`t provide an exported state, but based on this the methods are called.
 // To receive a new instance just add
 //
-//		package main
+//	package main
 //
-//		import (
-//			"github.com/andygrunwald/go-trending"
-//		)
+//	import (
+//		"github.com/andygrunwald/go-trending"
+//	)
 //
-//		func main() {
-//			trend := trending.NewTrending()
-//			...
-//		}
-//
+//	func main() {
+//		trend := trending.NewTrending()
+//		...
+//	}
 type Trending struct {
 	// Base URL for requests.
 	// Defaults to the public GitHub website, but can be set to a domain endpoint to use with GitHub Enterprise.
@@ -135,10 +134,9 @@ type Developer struct {
 // It provides access to the API of this package by returning a Trending datastructure.
 // Usage:
 //
-//		trend := trending.NewTrending()
-//		projects, err := trend.GetProjects(trending.TimeToday, "")
-//		...
-//
+//	trend := trending.NewTrending()
+//	projects, err := trend.GetProjects(trending.TimeToday, "")
+//	...
 func NewTrending() *Trending {
 	return NewTrendingWithClient(http.DefaultClient)
 }
