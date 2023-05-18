@@ -186,7 +186,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	// Query our information
 	doc.Find(".Box article.Box-row").Each(func(i int, s *goquery.Selection) {
 		// Collect project information
-		name := t.getProjectName(s.Find("h1 a").Text())
+		name := t.getProjectName(s.Find("h2 a").Text())
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
 		splittedName := strings.SplitAfterN(name, "/", 2)
@@ -197,7 +197,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		// Overwrite name to be 100% sure it contains no space between owner and repo name
 		name = fmt.Sprintf("%s/%s", owner, repositoryName)
 
-		address, exists := s.Find("h1 a").First().Attr("href")
+		address, exists := s.Find("h2 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath(address, exists)
 
 		description := s.Find("p").Text()

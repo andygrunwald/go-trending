@@ -228,15 +228,15 @@ func TestGetLanguages_CorrectContent(t *testing.T) {
 	}
 	// Might be dirty, but hey ...
 	// a) it works
-	// b) how high is the chance that HTML is not the 2nd language here?
+	// b) how high is the chance that this is not the 2nd language here?
 	// -> Very high :D (until the next testdata update)
 	secondLanguage := languages[1]
-	expectedLanguage := "HTML"
+	expectedLanguage := "1C Enterprise"
 	if secondLanguage.Name != expectedLanguage {
 		t.Errorf("GetLanguages returned %+v, want %+v", secondLanguage.Name, expectedLanguage)
 	}
 
-	secondLanguageURL := "https://github.com/trending/html?since=daily"
+	secondLanguageURL := "https://github.com/trending/1c-enterprise?since=daily"
 	if languages[1].URL.String() != secondLanguageURL {
 		t.Errorf("GetLanguages returned %+v, want %+v", languages[1].URL.String(), secondLanguageURL)
 	}
