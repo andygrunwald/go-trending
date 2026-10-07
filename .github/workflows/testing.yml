@@ -55,7 +55,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Run staticcheck
-        uses: dominikh/staticcheck-action@v1.4.0
+        uses: dominikh/staticcheck-action@v1.4.1
         with:
           version: "2025.1.1"
           install-go: false
