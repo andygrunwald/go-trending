@@ -360,6 +360,40 @@ func TestGetProjects_CorrectContent(t *testing.T) {
 	}
 }
 
+func TestGetProjects_StarsReflectTimeframe(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testFormValues(t, r, values{
+			"since": "daily",
+		})
+		website := getContentOfFile("./testdata/github.com_trending.html")
+		fmt.Fprint(w, string(website))
+	})
+
+	projects, err := client.GetProjects(TimeToday, "")
+	if err != nil {
+		t.Fatalf("GetProjects returned error: %v", err)
+	}
+
+	// Find smol-ai/developer in the parsed projects and verify the timeframe stars value
+	var found bool
+	for _, p := range projects {
+		if p.Name == "smol-ai/developer" {
+			found = true
+			if p.Stars != 1582 {
+				t.Errorf("smol-ai/developer Stars = %d, want %d (timeframe stars)", p.Stars, 1582)
+			}
+			break
+		}
+	}
+	if !found {
+		t.Fatal("smol-ai/developer not found in parsed projects")
+	}
+}
+
 func TestGetProjects_WithoutWhitespaceInName(t *testing.T) {
 	setup()
 	defer teardown()
