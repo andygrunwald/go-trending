@@ -206,10 +206,23 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		language := s.Find("span[itemprop=programmingLanguage]").Eq(0).Text()
 		language = strings.TrimSpace(language)
 
-		starsString := s.Find("div a[href$=\"/stargazers\"]").Text()
+		// Prefer the timeframe stars shown on the trending page (e.g. "1,582 stars today").
+		// Fallback to the total stargazers link when the timeframe text isn't present.
+		starsString := ""
+		timeframeText := s.Find("span.float-sm-right").First().Text()
+		timeframeText = strings.TrimSpace(timeframeText)
+		if timeframeText != "" {
+			re := regexp.MustCompile(`([\d,]+)`)
+			if m := re.FindStringSubmatch(timeframeText); len(m) >= 2 {
+				starsString = m[1]
+			}
+		}
+		if starsString == "" {
+			starsString = s.Find("div a[href$=\"/stargazers\"]").Text()
+		}
 		starsString = strings.TrimSpace(starsString)
-		// Replace english thousand separator ","
-		starsString = strings.Replace(starsString, ",", "", 1)
+		// Replace english thousand separator(s) ","
+		starsString = strings.ReplaceAll(starsString, ",", "")
 		stars, err := strconv.Atoi(starsString)
 		if err != nil {
 			stars = 0
