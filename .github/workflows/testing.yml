@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.26', '1.25' ]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@v6
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.26', '1.25' ]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@v6
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.26', '1.25' ]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@v6
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        go: [ '1.26', '1.25' ]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@v6
