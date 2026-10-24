@@ -261,6 +261,32 @@ func TestGetLanguages_NoContent(t *testing.T) {
 	}
 }
 
+func TestGetLanguages_UsesConfiguredBaseURL(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/trending", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `<div id="languages-menuitems"><a class="select-menu-item" href="/trending/go?since=daily">Go</a></div>`)
+	})
+
+	languages, err := client.GetLanguages()
+	if err != nil {
+		t.Fatalf("GetLanguages returned error: %v", err)
+	}
+	if len(languages) != 1 {
+		t.Fatalf("GetLanguages returned %d languages, want 1", len(languages))
+	}
+
+	wantURL := server.URL + "/trending/go?since=daily"
+	if got := languages[0].URL.String(); got != wantURL {
+		t.Errorf("Language URL = %q, want %q", got, wantURL)
+	}
+	if got := languages[0].URLName; got != "go" {
+		t.Errorf("Language URLName = %q, want %q", got, "go")
+	}
+}
+
 func TestGetProjects_NoContent(t *testing.T) {
 	setup()
 	defer teardown()

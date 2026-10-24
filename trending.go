@@ -280,19 +280,16 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 
 	// Query our information
 	doc.Find(mainSelector).Each(func(i int, s *goquery.Selection) {
-		expectedPrefix := "https://github.com"
-		languageAddress, _ := s.Attr("href")
-		if !strings.HasPrefix(languageAddress, expectedPrefix) {
-			languageAddress = expectedPrefix + languageAddress
-		}
+		languageAddress, exists := s.Attr("href")
+		filterURL := t.appendBaseHostToPath(languageAddress, exists)
 
 		languageURLName := ""
-
-		filterURL, _ := url.Parse(languageAddress)
-
-		re := regexp.MustCompile(`github.com/trending/([^/\\?]*)`)
-		if matches := re.FindStringSubmatch(languageAddress); len(matches) >= 2 && len(matches[1]) > 0 {
-			languageURLName = matches[1]
+		if filterURL != nil {
+			languagePathPrefix := urlTrendingPath + "/"
+			if strings.HasPrefix(filterURL.Path, languagePathPrefix) {
+				languagePath := strings.TrimPrefix(filterURL.Path, languagePathPrefix)
+				languageURLName = strings.SplitN(languagePath, "/", 2)[0]
+			}
 		}
 
 		language := Language{
